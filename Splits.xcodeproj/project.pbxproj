@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B40B961240841570078E2FA /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B40B960240841570078E2FA /* Model.swift */; };
 		4B4E2ABE2406DA0B003237C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4E2ABD2406DA0B003237C0 /* AppDelegate.swift */; };
 		4B4E2AC02406DA0B003237C0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4E2ABF2406DA0B003237C0 /* SceneDelegate.swift */; };
 		4B4E2AC52406DA0B003237C0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4E2AC32406DA0B003237C0 /* Main.storyboard */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B40B960240841570078E2FA /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		4B4E2ABA2406DA0B003237C0 /* Splits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Splits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4E2ABD2406DA0B003237C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4E2ABF2406DA0B003237C0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				4B4E2ABD2406DA0B003237C0 /* AppDelegate.swift */,
+				4B40B960240841570078E2FA /* Model.swift */,
 				4B4E2ABF2406DA0B003237C0 /* SceneDelegate.swift */,
 				4B4E69CC24083BC800887A0A /* CalculatorView.swift */,
 				4B4E69CE24083BE800887A0A /* DisciplinesTable.swift */,
@@ -147,6 +150,7 @@
 				4B4E2ABE2406DA0B003237C0 /* AppDelegate.swift in Sources */,
 				4B4E69CD24083BC800887A0A /* CalculatorView.swift in Sources */,
 				4B4E2AC82406DA0B003237C0 /* Splits.xcdatamodeld in Sources */,
+				4B40B961240841570078E2FA /* Model.swift in Sources */,
 				4B4E69CF24083BE800887A0A /* DisciplinesTable.swift in Sources */,
 				4B4E2AC02406DA0B003237C0 /* SceneDelegate.swift in Sources */,
 			);
