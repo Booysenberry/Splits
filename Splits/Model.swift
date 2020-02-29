@@ -9,13 +9,12 @@
 import Foundation
 
 struct Race {
-    var swimDistance: Double?
-    var swimTime: Int?
-    var t1: Int
-    var bikeDistance: Double?
-    var bikeTime: Int?
-    var t2: Int
-    var runDistance: Double?
-    var runTime: Int?
-    var totalTime: Int?
+    var swimDistance = 0.0
+    var swimTime = 0
+    var t1 = 0
+    var bikeDistance = 0.0
+    var bikeTime = 0
+    var t2 = 0
+    var runDistance = 0.0
+    var runTime = 0
 }

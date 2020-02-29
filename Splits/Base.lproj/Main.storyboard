@@ -26,6 +26,9 @@
                                     <segment title="1/2 Ironman"/>
                                     <segment title="Ironman"/>
                                 </segments>
+                                <connections>
+                                    <action selector="didChangeRaceDistance:" destination="BYZ-38-t0r" eventType="valueChanged" id="9vq-aa-Rkj"/>
+                                </connections>
                             </segmentedControl>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ua3-jG-fEx">
                                 <rect key="frame" x="0.0" y="136" width="414" height="740"/>
@@ -59,10 +62,10 @@
             </objects>
             <point key="canvasLocation" x="1047.8260869565217" y="137.94642857142856"/>
         </scene>
-        <!--Disciplines Table-->
+        <!--Race Splits Table-->
         <scene sceneID="jnY-TF-efb">
             <objects>
-                <tableViewController id="0bI-gd-m2m" customClass="DisciplinesTable" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="0bI-gd-m2m" customClass="RaceSplitsTable" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VXR-SG-Uyo">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="740"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -98,7 +101,7 @@
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.5 Km" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iRh-BY-Gc4" userLabel="Distance">
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="500m" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iRh-BY-Gc4" userLabel="Distance">
                                                                             <rect key="frame" x="0.0" y="23.5" width="58.5" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <nil key="textColor"/>
@@ -108,8 +111,11 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VMX-wC-m6G">
+                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="45" minValue="45" maxValue="180" translatesAutoresizingMaskIntoConstraints="NO" id="VMX-wC-m6G">
                                                             <rect key="frame" x="-2" y="50" width="378" height="31"/>
+                                                            <connections>
+                                                                <action selector="swimSliderChanged:" destination="0bI-gd-m2m" eventType="valueChanged" id="JaZ-Ro-OO3"/>
+                                                            </connections>
                                                         </slider>
                                                     </subviews>
                                                 </stackView>
@@ -157,8 +163,11 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="NsM-D0-5Yi">
+                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="NsM-D0-5Yi">
                                                             <rect key="frame" x="-2" y="50" width="378" height="31"/>
+                                                            <connections>
+                                                                <action selector="t1SliderChanged:" destination="0bI-gd-m2m" eventType="valueChanged" id="bIL-D3-aQA"/>
+                                                            </connections>
                                                         </slider>
                                                     </subviews>
                                                 </stackView>
@@ -199,7 +208,7 @@
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.5 Km" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ELE-E5-zqc" userLabel="Distance">
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10km" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ELE-E5-zqc" userLabel="Distance">
                                                                             <rect key="frame" x="0.0" y="23.5" width="58.5" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <nil key="textColor"/>
@@ -209,8 +218,11 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Kj6-no-zjD">
+                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Kj6-no-zjD">
                                                             <rect key="frame" x="-2" y="50" width="378" height="31"/>
+                                                            <connections>
+                                                                <action selector="bikeSliderChanged:" destination="0bI-gd-m2m" eventType="valueChanged" id="i7O-xw-Xv7"/>
+                                                            </connections>
                                                         </slider>
                                                     </subviews>
                                                 </stackView>
@@ -236,7 +248,7 @@
                                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="TLR-Lk-mbj">
                                                             <rect key="frame" x="0.0" y="0.0" width="374" height="46"/>
                                                             <subviews>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swim pace: 2:00 / 100m" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n9r-ky-00j" userLabel="Pace">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="T2: 1:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n9r-ky-00j" userLabel="Pace">
                                                                     <rect key="frame" x="0.0" y="0.0" width="265.5" height="20.5"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="265.5" id="4Ja-7Q-oqr"/>
@@ -258,8 +270,11 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="0Ch-jz-aDZ">
+                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="0Ch-jz-aDZ">
                                                             <rect key="frame" x="-2" y="50" width="378" height="31"/>
+                                                            <connections>
+                                                                <action selector="t2SliderChanged:" destination="0bI-gd-m2m" eventType="valueChanged" id="1m6-LX-zU4"/>
+                                                            </connections>
                                                         </slider>
                                                     </subviews>
                                                 </stackView>
@@ -300,7 +315,7 @@
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.5 Km" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="naB-bz-vwt" userLabel="Distance">
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5Km" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="naB-bz-vwt" userLabel="Distance">
                                                                             <rect key="frame" x="0.0" y="23.5" width="58.5" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <nil key="textColor"/>
@@ -310,8 +325,11 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="W21-w5-OPz">
+                                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="W21-w5-OPz">
                                                             <rect key="frame" x="-2" y="50" width="378" height="31"/>
+                                                            <connections>
+                                                                <action selector="runSliderChanged:" destination="0bI-gd-m2m" eventType="valueChanged" id="eb1-sR-PgI"/>
+                                                            </connections>
                                                         </slider>
                                                     </subviews>
                                                 </stackView>
