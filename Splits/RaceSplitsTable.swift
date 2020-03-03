@@ -13,7 +13,7 @@ class RaceSplitsTable: UITableViewController {
     var receivedRace = Race()
     var bikeTotalTime = 0
     var swimTotalTime = 0
-    var runtotalTime = 0
+    var runTotalTime = 0
     var t1TotalTime = 0
     var t2TotalTime = 0
     
@@ -56,6 +56,9 @@ class RaceSplitsTable: UITableViewController {
         if locale.usesMetricSystem == false {
             bikeSlider.minimumValue = 10
             bikeSlider.maximumValue = 30
+            
+            runSlider.minimumValue = 300
+            runSlider.maximumValue = 960
         }
         
         // Test data - REMOVE
@@ -97,10 +100,10 @@ class RaceSplitsTable: UITableViewController {
     // Calculate total time
     
     func calculateTotalTime() {
-        let accumulateTime = swimTotalTime + t1TotalTime + bikeTotalTime + t2TotalTime + runtotalTime
+        let accumulateTime = swimTotalTime + t1TotalTime + bikeTotalTime + t2TotalTime + runTotalTime
         totalTime.text = "\(timeString(time: TimeInterval(accumulateTime)))"
     }
-
+    
     // Show slider values on UI
     @IBAction func swimSliderChanged(_ sender: UISlider) {
         
@@ -111,6 +114,9 @@ class RaceSplitsTable: UITableViewController {
     }
     
     @IBAction func t1SliderChanged(_ sender: UISlider) {
+        
+        let convertedT1Time = t1Slider.value * 60
+        t1TotalTime = Int(convertedT1Time)
         t1Pace.text = "T1: \(t1Slider.value.rounded()) mins"
         t1Time.text = "\(t1Slider.value.rounded()) mins"
         calculateTotalTime()
@@ -120,8 +126,8 @@ class RaceSplitsTable: UITableViewController {
         
         if locale.usesMetricSystem {
             
-            let convertedSpeed = bikeSlider.value.rounded() / 3.6 // kph to m/s
-            let bikeSplit = receivedRace.bikeDistance / Double(convertedSpeed)
+            let convertedBikeSpeed = bikeSlider.value / 3.6 // kph to m/s
+            let bikeSplit = receivedRace.bikeDistance / Double(convertedBikeSpeed)
             bikeTotalTime = Int(bikeSplit)
             bikePace.text = "Bike pace: \(bikeSlider.value.rounded()) kph"
             bikeTime.text = "\(timeString(time: TimeInterval(bikeSplit.rounded())))"
@@ -129,8 +135,8 @@ class RaceSplitsTable: UITableViewController {
             
         } else {
             
-            let convertedSpeed = bikeSlider.value.rounded() / 2.237 // mph to m/s
-            let bikeSplit = receivedRace.bikeDistance / Double(convertedSpeed)
+            let convertedBikeSpeed = bikeSlider.value / 2.237 // mph to m/s
+            let bikeSplit = receivedRace.bikeDistance / Double(convertedBikeSpeed)
             bikeTotalTime = Int(bikeSplit)
             bikePace.text = "Bike pace: \(bikeSlider.value.rounded()) mph"
             bikeTime.text = "\(timeString(time: TimeInterval(bikeSplit.rounded())))"
@@ -139,15 +145,36 @@ class RaceSplitsTable: UITableViewController {
     }
     
     @IBAction func t2SliderChanged(_ sender: UISlider) {
-        t2Pace.text = "T2: \(t2Slider.value.rounded()) mins"
+        
+        let convertedT2Time = t2Slider.value * 60
+        t2TotalTime = Int(convertedT2Time)
+        t2Pace.text = "T1: \(t2Slider.value.rounded()) mins"
         t2Time.text = "\(t2Slider.value.rounded()) mins"
         calculateTotalTime()
         
     }
     
     @IBAction func runSliderChanged(_ sender: UISlider) {
-        runPace.text = "\(paceString(time: TimeInterval(runSlider!.value))) /km"
-        calculateTotalTime()
+        
+        if locale.usesMetricSystem {
+            
+            let convertedRunSpeed = 16.667 / (runSlider.value / 60) // m/km to m/s
+            let runSplit = receivedRace.runDistance / Double(convertedRunSpeed)
+            runTotalTime = Int(runSplit)
+            runPace.text = "\(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+            runTime.text = "\(timeString(time: TimeInterval(runSplit.rounded())))"
+            calculateTotalTime()
+            
+        } else {
+            
+            let convertedRunSpeed = 26.822 / (runSlider.value / 60) // m/mi to m/s
+            let runSplit = (receivedRace.runDistance) / Double(convertedRunSpeed)
+            runTotalTime = Int(runSplit)
+            runPace.text = "\(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+            runTime.text = "\(timeString(time: TimeInterval(runSplit.rounded())))"
+            calculateTotalTime()
+            
+        }
     }
 }
 
