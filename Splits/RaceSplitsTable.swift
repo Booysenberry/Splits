@@ -19,7 +19,6 @@ class RaceSplitsTable: UITableViewController {
     let step: Float = 5
     
     let locale = Locale.current
-    
     let distanceFormatter = LengthFormatter()
     let timeFormatter = DateFormatter()
     let measurementFormatter = MeasurementFormatter()
@@ -77,11 +76,6 @@ class RaceSplitsTable: UITableViewController {
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
             
         }
-
-        // Test data - REMOVE
-        receivedRace.bikeDistance = 40000
-        receivedRace.runDistance = 10000
-        receivedRace.swimDistance = 1500
         
         let formattedSwimDistance = Measurement(value: receivedRace.swimDistance, unit: UnitLength.meters)
         let formattedBikeDistance = Measurement(value: receivedRace.bikeDistance, unit: UnitLength.meters)

@@ -13,49 +13,55 @@ class CalculatorView: UIViewController {
     @IBOutlet weak var distanceSelector: UISegmentedControl!
     
     var race = Race()
-    var embeddedVC: RaceSplitsTable!
+    var embeddedVC: RaceSplitsTable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         
     }
     
     @IBAction func didChangeRaceDistance(_ sender: Any) {
         
+        let raceDistanceVC = self.children.first as! RaceSplitsTable
+        
         switch distanceSelector.selectedSegmentIndex {
             
         case 0:
-            race.swimDistance = 500
-            race.bikeDistance = 20000
-            race.runDistance = 5000
+            raceDistanceVC.receivedRace.swimDistance = 500
+            raceDistanceVC.receivedRace.bikeDistance = 20000
+            raceDistanceVC.receivedRace.runDistance = 5000
             
         case 1:
-            race.swimDistance = 1500
-            race.bikeDistance = 40000
-            race.runDistance = 10000
+            raceDistanceVC.receivedRace.swimDistance = 1500
+            raceDistanceVC.receivedRace.bikeDistance = 40000
+            raceDistanceVC.receivedRace.runDistance = 10000
             
         case 2:
-            race.swimDistance = 2000
-            race.bikeDistance = 90000
-            race.runDistance = 21100
+            raceDistanceVC.receivedRace.swimDistance = 2000
+            raceDistanceVC.receivedRace.bikeDistance = 90000
+            raceDistanceVC.receivedRace.runDistance = 21100
             
         case 3:
-            race.swimDistance = 3800
-            race.bikeDistance = 180000
-            race.runDistance = 42200
+            raceDistanceVC.receivedRace.swimDistance = 3800
+            raceDistanceVC.receivedRace.bikeDistance = 180000
+            raceDistanceVC.receivedRace.runDistance = 42200
             
         default:
             break
         }
+        raceDistanceVC.tableView.reloadData()
+        raceDistanceVC.viewDidLoad()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if (segue.identifier == "embeddedSegue") {
             
-            if let raceDistanceVC = segue.destination as? RaceSplitsTable {
-                raceDistanceVC.receivedRace = race
-            }
+            let raceDistanceVC = segue.destination as! RaceSplitsTable
+            raceDistanceVC.receivedRace.swimDistance = 500
+            raceDistanceVC.receivedRace.bikeDistance = 20000
+            raceDistanceVC.receivedRace.runDistance = 5000
         }
     }
 }
