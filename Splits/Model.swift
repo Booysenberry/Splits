@@ -9,12 +9,12 @@
 import Foundation
 
 struct Race {
-    var swimDistance = 0.0
-    var swimTime = 0
-    var t1 = 0
-    var bikeDistance = 0.0
-    var bikeTime = 0
-    var t2 = 0
-    var runDistance = 0.0
-    var runTime = 0
+    var swimDistance: Float = 0.0
+    var swimTime: Float = 0.0
+    var t1: Float = 0.0
+    var bikeDistance: Float = 0.0
+    var bikeTime: Float = 0.0
+    var t2: Float = 0.0
+    var runDistance: Float = 0.0
+    var runTime: Float = 0.0
 }

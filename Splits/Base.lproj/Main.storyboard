@@ -12,11 +12,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="CalculatorView" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="20W-7s-EgH">
-                                <rect key="frame" x="0.0" y="88" width="414" height="41"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="41"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Y3S-b2-n2M"/>
                                 </constraints>
@@ -31,17 +31,39 @@
                                 </connections>
                             </segmentedControl>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ua3-jG-fEx">
-                                <rect key="frame" x="0.0" y="136" width="414" height="740"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="774"/>
                                 <connections>
                                     <segue destination="0bI-gd-m2m" kind="embed" identifier="embeddedSegue" id="x7o-vP-Gib"/>
                                 </connections>
                             </containerView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vww-BH-Nbj" userLabel="Menu">
+                                <rect key="frame" x="0.0" y="0.0" width="250" height="822"/>
+                                <subviews>
+                                    <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jNc-SP-1ll">
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="822"/>
+                                        <connections>
+                                            <segue destination="MDf-Z8-NuS" kind="embed" id="Rt8-38-Srf"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstItem="jNc-SP-1ll" firstAttribute="leading" secondItem="Vww-BH-Nbj" secondAttribute="leading" id="9Cz-w8-FHf"/>
+                                    <constraint firstItem="jNc-SP-1ll" firstAttribute="width" secondItem="Vww-BH-Nbj" secondAttribute="width" id="S3D-jw-Szp"/>
+                                    <constraint firstItem="jNc-SP-1ll" firstAttribute="top" secondItem="Vww-BH-Nbj" secondAttribute="top" id="UTM-E6-OwA"/>
+                                    <constraint firstAttribute="width" constant="250" id="hUY-Jx-itL"/>
+                                    <constraint firstItem="jNc-SP-1ll" firstAttribute="height" secondItem="Vww-BH-Nbj" secondAttribute="height" id="iUO-HE-rko"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Vww-BH-Nbj" secondAttribute="bottom" constant="20" symbolic="YES" id="3Ue-cF-fNL"/>
                             <constraint firstItem="ua3-jG-fEx" firstAttribute="top" secondItem="20W-7s-EgH" secondAttribute="bottom" constant="8" symbolic="YES" id="Dp7-Ue-jGv"/>
                             <constraint firstItem="ua3-jG-fEx" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="LTq-Dw-b8Y"/>
+                            <constraint firstItem="Vww-BH-Nbj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="N50-fb-f4Z"/>
                             <constraint firstAttribute="bottom" secondItem="ua3-jG-fEx" secondAttribute="bottom" constant="20" symbolic="YES" id="OIi-Dg-SC7"/>
+                            <constraint firstItem="Vww-BH-Nbj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="RYe-hg-4di"/>
                             <constraint firstItem="20W-7s-EgH" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="TSf-pv-v5m"/>
                             <constraint firstAttribute="trailing" secondItem="20W-7s-EgH" secondAttribute="trailing" id="VVm-gi-id7"/>
                             <constraint firstItem="20W-7s-EgH" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="ixR-kY-PNM"/>
@@ -52,10 +74,20 @@
                     <navigationItem key="navigationItem" title="Triathlon Calculator" id="iL4-Jr-bkq">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="menu" id="hGn-kW-TrC">
                             <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <connections>
+                                <action selector="menuButtonTapped:" destination="BYZ-38-t0r" id="6LJ-v8-hfO"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="hUk-Sr-OXv">
+                            <connections>
+                                <action selector="saveRace:" destination="BYZ-38-t0r" id="2RC-vA-WCC"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="distanceSelector" destination="20W-7s-EgH" id="f69-cn-ZMm"/>
+                        <outlet property="menuLeadingConstraint" destination="RYe-hg-4di" id="syK-yT-IFF"/>
+                        <outlet property="menuView" destination="Vww-BH-Nbj" id="CP4-MA-Aza"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -65,9 +97,9 @@
         <!--Race Splits Table-->
         <scene sceneID="jnY-TF-efb">
             <objects>
-                <tableViewController id="0bI-gd-m2m" customClass="RaceSplitsTable" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VXR-SG-Uyo">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="740"/>
+                <tableViewController storyboardIdentifier="RaceSplitsTable" id="0bI-gd-m2m" customClass="RaceSplitsTable" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VXR-SG-Uyo">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="774"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <sections>
@@ -401,6 +433,49 @@
             </objects>
             <point key="canvasLocation" x="1940.5797101449277" y="137.27678571428569"/>
         </scene>
+        <!--Saved Races Table View-->
+        <scene sceneID="uDJ-hQ-9bS">
+            <objects>
+                <tableViewController id="MDf-Z8-NuS" customClass="SavedRacesTableView" customModule="Splits" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Fys-xB-8Q1">
+                        <rect key="frame" x="0.0" y="0.0" width="250" height="822"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="savedRaceCell" textLabel="lRL-J8-N5Y" style="IBUITableViewCellStyleDefault" id="urV-dU-uVS" customClass="SavedRaceCell" customModule="Splits" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="250" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="urV-dU-uVS" id="6gy-Cz-8a1">
+                                    <rect key="frame" x="0.0" y="0.0" width="223" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lRL-J8-N5Y" userLabel="Race Name">
+                                            <rect key="frame" x="16" y="0.0" width="199" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="raceNameLabel" destination="lRL-J8-N5Y" id="A6c-7I-nKB"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="MDf-Z8-NuS" id="bcp-jW-OAH"/>
+                            <outlet property="delegate" destination="MDf-Z8-NuS" id="OS3-WF-XaI"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="showSavedRace" id="2cE-im-41o"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TFo-1h-4y6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1048" y="825"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="vqo-Dd-IGZ">
             <objects>
@@ -423,4 +498,7 @@
     <resources>
         <image name="menu" width="22" height="22"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="2cE-im-41o"/>
+    </inferredMetricsTieBreakers>
 </document>
