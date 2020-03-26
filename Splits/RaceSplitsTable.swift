@@ -186,6 +186,7 @@ class RaceSplitsTable: UITableViewController {
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
         t2Time.text = "\(timeString(time: TimeInterval(t2Slider.value)))"
         runTime.text = "\(timeString(time: TimeInterval(runTotalTime)))"
+        defaults.set(accumulateTime, forKey: "totalRaceTime")
     }
     
     // Update UI with slider values

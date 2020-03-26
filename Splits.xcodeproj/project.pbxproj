@@ -16,8 +16,9 @@
 		4B4E2ACD2406DA0D003237C0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4E2ACB2406DA0D003237C0 /* LaunchScreen.storyboard */; };
 		4B4E69CD24083BC800887A0A /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4E69CC24083BC800887A0A /* CalculatorView.swift */; };
 		4B4E69CF24083BE800887A0A /* RaceSplitsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4E69CE24083BE800887A0A /* RaceSplitsTable.swift */; };
-		4BF98C31242AC48A006F5330 /* SavedRacesTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF98C30242AC48A006F5330 /* SavedRacesTableView.swift */; };
-		4BF98C33242AC5D2006F5330 /* SavedRaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF98C32242AC5D2006F5330 /* SavedRaceCell.swift */; };
+		4BCB4FC2242C2DE3006F7B12 /* MenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCB4FC1242C2DE3006F7B12 /* MenuTableViewController.swift */; };
+		4BCB4FC4242C2E78006F7B12 /* SavedRacesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCB4FC3242C2E78006F7B12 /* SavedRacesTableViewController.swift */; };
+		4BCB4FC6242C2FD8006F7B12 /* SavedRaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCB4FC5242C2FD8006F7B12 /* SavedRaceCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,8 +33,9 @@
 		4B4E2ACE2406DA0D003237C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B4E69CC24083BC800887A0A /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
 		4B4E69CE24083BE800887A0A /* RaceSplitsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSplitsTable.swift; sourceTree = "<group>"; };
-		4BF98C30242AC48A006F5330 /* SavedRacesTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRacesTableView.swift; sourceTree = "<group>"; };
-		4BF98C32242AC5D2006F5330 /* SavedRaceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRaceCell.swift; sourceTree = "<group>"; };
+		4BCB4FC1242C2DE3006F7B12 /* MenuTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTableViewController.swift; sourceTree = "<group>"; };
+		4BCB4FC3242C2E78006F7B12 /* SavedRacesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRacesTableViewController.swift; sourceTree = "<group>"; };
+		4BCB4FC5242C2FD8006F7B12 /* SavedRaceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRaceCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,11 +70,12 @@
 			children = (
 				4B4E2ABD2406DA0B003237C0 /* AppDelegate.swift */,
 				4B40B960240841570078E2FA /* Model.swift */,
+				4BCB4FC5242C2FD8006F7B12 /* SavedRaceCell.swift */,
 				4B4E2ABF2406DA0B003237C0 /* SceneDelegate.swift */,
-				4BF98C32242AC5D2006F5330 /* SavedRaceCell.swift */,
 				4B4E69CC24083BC800887A0A /* CalculatorView.swift */,
 				4B4E69CE24083BE800887A0A /* RaceSplitsTable.swift */,
-				4BF98C30242AC48A006F5330 /* SavedRacesTableView.swift */,
+				4BCB4FC1242C2DE3006F7B12 /* MenuTableViewController.swift */,
+				4BCB4FC3242C2E78006F7B12 /* SavedRacesTableViewController.swift */,
 				4B4E2AC32406DA0B003237C0 /* Main.storyboard */,
 				4B4E2AC92406DA0D003237C0 /* Assets.xcassets */,
 				4B4E2ACB2406DA0D003237C0 /* LaunchScreen.storyboard */,
@@ -154,13 +157,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B4E2ABE2406DA0B003237C0 /* AppDelegate.swift in Sources */,
+				4BCB4FC6242C2FD8006F7B12 /* SavedRaceCell.swift in Sources */,
+				4BCB4FC2242C2DE3006F7B12 /* MenuTableViewController.swift in Sources */,
 				4B4E69CD24083BC800887A0A /* CalculatorView.swift in Sources */,
 				4B4E2AC82406DA0B003237C0 /* Splits.xcdatamodeld in Sources */,
 				4B40B961240841570078E2FA /* Model.swift in Sources */,
-				4BF98C33242AC5D2006F5330 /* SavedRaceCell.swift in Sources */,
 				4B4E69CF24083BE800887A0A /* RaceSplitsTable.swift in Sources */,
+				4BCB4FC4242C2E78006F7B12 /* SavedRacesTableViewController.swift in Sources */,
 				4B4E2AC02406DA0B003237C0 /* SceneDelegate.swift in Sources */,
-				4BF98C31242AC48A006F5330 /* SavedRacesTableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

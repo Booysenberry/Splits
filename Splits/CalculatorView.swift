@@ -16,6 +16,7 @@ class CalculatorView: UIViewController {
     @IBOutlet weak var menuLeadingConstraint: NSLayoutConstraint!
     
     var race = Race()
+    var raceName = ""
     var menuShowing = false
     let defaults = UserDefaults.standard
     let notificatioCentre = NotificationCenter.default
@@ -103,12 +104,11 @@ class CalculatorView: UIViewController {
 
             if let name = alert.textFields?.first?.text {
                 self.defaults.set(name, forKey: "raceName")
+                self.saveToCoreData()
             }
         }))
 
         self.present(alert, animated: true)
-        
-        saveToCoreData()
     }
     
     //MARK: - Toggle menu
@@ -142,6 +142,7 @@ class CalculatorView: UIViewController {
             race.runPace = defaults.float(forKey: "runPace")
             race.raceType = Int32(defaults.integer(forKey: "raceType"))
             race.raceName = defaults.string(forKey: "raceName")
+            race.totalTime = defaults.float(forKey: "totalRaceTime")
             
             // Save to core data
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
