@@ -16,7 +16,6 @@ class CalculatorView: UIViewController {
     @IBOutlet weak var menuLeadingConstraint: NSLayoutConstraint!
     
     var race = Race()
-    var raceName = ""
     var menuShowing = false
     let defaults = UserDefaults.standard
     let notificatioCentre = NotificationCenter.default
@@ -134,13 +133,14 @@ class CalculatorView: UIViewController {
         
         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
             let race = SavedRace(context: context)
+            let raceType = distanceSelector.selectedSegmentIndex
             
             race.swimPace = defaults.float(forKey: "swimPace")
             race.t1Time = defaults.float(forKey: "t1Pace")
             race.bikePace = defaults.float(forKey: "bikePace")
             race.t2Time = defaults.float(forKey: "t2Pace")
             race.runPace = defaults.float(forKey: "runPace")
-            race.raceType = Int32(defaults.integer(forKey: "raceType"))
+            race.raceType = Int32(raceType)
             race.raceName = defaults.string(forKey: "raceName")
             race.totalTime = defaults.float(forKey: "totalRaceTime")
             

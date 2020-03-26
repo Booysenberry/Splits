@@ -12,7 +12,7 @@ import CoreData
 class RaceSplitsTable: UITableViewController {
     
     var receivedRace = Race()
-    
+    var isSavedRace = false
     var swimTotalTime: Float = 0.0
     var bikeTotalTime: Float = 0.0
     var runTotalTime: Float = 0.0
@@ -51,59 +51,95 @@ class RaceSplitsTable: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Displays slowest speed on left
+        swimSlider.semanticContentAttribute = .forceRightToLeft
+        runSlider.semanticContentAttribute = .forceRightToLeft
+        
+        for slider in [swimSlider, runSlider] {
+            slider?.minimumTrackTintColor = .systemGreen
+            slider?.maximumTrackTintColor = .systemOrange
+        }
+        
+        for slider in [bikeSlider, t1Slider, t2Slider] {
+            slider?.minimumTrackTintColor = .systemOrange
+            slider?.maximumTrackTintColor = .systemGreen
+        }
+        
         numberFormatter.maximumFractionDigits = 1
         measurementFormatter.numberFormatter = numberFormatter
         timeFormatter.dateFormat = "HH:mm:ss"
         
-        // Checks if this is the first time the app is being launched
-        if defaults.bool(forKey: "First Launch") == true {
+        if isSavedRace {
             
-            t1Slider.setValue(defaults.float(forKey: "t1Pace"), animated: false)
-            t1Pace.text = "T1: \(paceString(time: TimeInterval(defaults.float(forKey: "t1Pace")))) mins"
+            title = "\(receivedRace.raceName)"
             
-            t2Slider.setValue(defaults.float(forKey: "t2Pace"), animated: false)
-            t2Pace.text = "T2: \(paceString(time: TimeInterval(defaults.float(forKey: "t2Pace")))) mins"
+            t1Slider.setValue(receivedRace.t1Time, animated: false)
+            t1Pace.text = "T1: \(paceString(time: TimeInterval(receivedRace.t1Time))) mins"
             
-            swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
-            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100 yds"
+            t2Slider.setValue(receivedRace.t2Time, animated: false)
+            t2Pace.text = "T2: \(paceString(time: TimeInterval(receivedRace.t2Time))) mins"
             
-            bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
-            bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) mph"
+            swimSlider.setValue(receivedRace.swimPace.rounded(), animated: false)
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(receivedRace.swimPace.rounded()))) /100 yds"
             
-            runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
-            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
+            bikeSlider.setValue(receivedRace.bikePace.rounded(), animated: false)
+            bikePace.text = "Bike: \(receivedRace.bikePace.rounded()) mph"
             
-            defaults.set(true, forKey: "First Launch")
+            runSlider.setValue(receivedRace.runPace, animated: false)
+            runPace.text = "Run: \(paceString(time: TimeInterval(receivedRace.runPace.rounded()))) /mile"
             
         } else {
             
-            t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
-            t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
-            
-            if locale.usesMetricSystem == false {
+            // Checks if this is the first time the app is being launched
+            if defaults.bool(forKey: "First Launch") == true {
                 
-                swimSlider.setValue(112.5, animated: false)
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
+                t1Slider.setValue(defaults.float(forKey: "t1Pace"), animated: false)
+                t1Pace.text = "T1: \(paceString(time: TimeInterval(defaults.float(forKey: "t1Pace")))) mins"
                 
-                bikeSlider.minimumValue = 10
-                bikeSlider.maximumValue = 30
-                bikeSlider.setValue(20, animated: false)
-                bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
-               
-                runSlider.minimumValue = 300
-                runSlider.maximumValue = 960
-                runSlider.setValue(630, animated: false)
-                runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+                t2Slider.setValue(defaults.float(forKey: "t2Pace"), animated: false)
+                t2Pace.text = "T2: \(paceString(time: TimeInterval(defaults.float(forKey: "t2Pace")))) mins"
+                
+                swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100 yds"
+                
+                bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
+                bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) mph"
+                
+                runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
+                runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
+                
+                defaults.set(true, forKey: "First Launch")
                 
             } else {
                 
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
-                bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
-                runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+                t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
+                t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
                 
+                if locale.usesMetricSystem == false {
+                    
+                    swimSlider.setValue(112.5, animated: false)
+                    swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
+                    
+                    bikeSlider.minimumValue = 10
+                    bikeSlider.maximumValue = 30
+                    bikeSlider.setValue(20, animated: false)
+                    bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
+                    
+                    runSlider.minimumValue = 300
+                    runSlider.maximumValue = 960
+                    runSlider.setValue(630, animated: false)
+                    runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+                    
+                } else {
+                    
+                    swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
+                    bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
+                    runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+                    
+                }
+                
+                defaults.set(true, forKey: "First Launch")
             }
-            
-            defaults.set(true, forKey: "First Launch")
         }
         
         let formattedSwimDistance = Measurement(value: Double(receivedRace.swimDistance), unit: UnitLength.meters)
@@ -172,7 +208,7 @@ class RaceSplitsTable: UITableViewController {
             
             t1TotalTime = t1Slider.value
             t2TotalTime = t2Slider.value
-   
+            
         }
         calculateTotalTime()
     }
@@ -186,7 +222,10 @@ class RaceSplitsTable: UITableViewController {
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
         t2Time.text = "\(timeString(time: TimeInterval(t2Slider.value)))"
         runTime.text = "\(timeString(time: TimeInterval(runTotalTime)))"
-        defaults.set(accumulateTime, forKey: "totalRaceTime")
+        
+        if isSavedRace == false {
+            defaults.set(accumulateTime, forKey: "totalRaceTime")
+        }
     }
     
     // Update UI with slider values
@@ -200,7 +239,10 @@ class RaceSplitsTable: UITableViewController {
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) / 100 yds"
         }
         swimTime.text = "\(timeString(time: TimeInterval(swimTotalTime)))"
-        defaults.set(swimSlider.value, forKey: "swimPace")
+        
+        if isSavedRace == false {
+            defaults.set(swimSlider.value, forKey: "swimPace")
+        }
     }
     
     @IBAction func t1SliderChanged(_ sender: UISlider) {
@@ -211,9 +253,13 @@ class RaceSplitsTable: UITableViewController {
         t1Slider.value = roundedT1Time
         t1TotalTime = roundedT1Time
         t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
-        defaults.set(t1Slider.value, forKey: "t1Pace")
+        
+        if isSavedRace == false {
+            defaults.set(t1Slider.value, forKey: "t1Pace")
+        }
         calculateTotalTime()
     }
+    
     
     @IBAction func bikeSliderChanged(_ sender: UISlider) {
         
@@ -225,7 +271,9 @@ class RaceSplitsTable: UITableViewController {
             bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
         }
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
-        defaults.set(bikeSlider.value, forKey: "bikePace")
+        if isSavedRace == false {
+            defaults.set(bikeSlider.value, forKey: "bikePace")
+        }
     }
     
     @IBAction func t2SliderChanged(_ sender: UISlider) {
@@ -236,7 +284,10 @@ class RaceSplitsTable: UITableViewController {
         t2Slider.value = roundedT2Time
         t2TotalTime = roundedT2Time
         t2Pace.text = "T1: \(paceString(time: TimeInterval(t2Slider.value))) mins"
-        defaults.set(t2Slider.value, forKey: "t2Pace")
+        
+        if isSavedRace == false {
+            defaults.set(t2Slider.value, forKey: "t2Pace")
+        }
         calculateTotalTime()
     }
     
@@ -249,7 +300,9 @@ class RaceSplitsTable: UITableViewController {
         } else {
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
         }
-        defaults.set(runSlider.value, forKey: "runPace")
+        if isSavedRace == false {
+            defaults.set(runSlider.value, forKey: "runPace")
+        }
     }
 }
 

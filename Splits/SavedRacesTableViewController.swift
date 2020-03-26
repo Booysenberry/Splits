@@ -11,7 +11,7 @@ import UIKit
 class SavedRacesTableViewController: UITableViewController {
     
     var savedRacesFromCD = [SavedRace]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,27 +19,27 @@ class SavedRacesTableViewController: UITableViewController {
         savedRacesFromCD.removeAll()
         getSavedRaces()
         navigationItem.rightBarButtonItem = editButtonItem
-
+        
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-
+        
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+        
         return savedRacesFromCD.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "savedRaceCell") as! SavedRaceCell
-
+        
         cell.raceNameLabel.text = savedRacesFromCD[indexPath.row].raceName
         cell.raceTimeLabel.text = "\(timeString(time: TimeInterval(savedRacesFromCD[indexPath.row].totalTime)))"
-
+        
         return cell
     }
     
@@ -54,6 +54,57 @@ class SavedRacesTableViewController: UITableViewController {
             }
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedRace = savedRacesFromCD[indexPath.row]
+        performSegue(withIdentifier: "showSavedRace", sender: selectedRace)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let splitsVC = segue.destination as? RaceSplitsTable {
+            if let selectedRace = sender as? SavedRace {
+                
+                splitsVC.isSavedRace = true
+                splitsVC.receivedRace.runPace = selectedRace.runPace
+                splitsVC.receivedRace.bikePace = selectedRace.bikePace
+                splitsVC.receivedRace.swimPace = selectedRace.swimPace
+                splitsVC.receivedRace.t1Time = selectedRace.t1Time
+                splitsVC.receivedRace.t2Time = selectedRace.t2Time
+                
+                if let name = selectedRace.raceName {
+                    splitsVC.receivedRace.raceName = name
+                }
+                
+                switch selectedRace.raceType {
+                case 0:
+                    splitsVC.receivedRace.swimDistance = 500
+                    splitsVC.receivedRace.bikeDistance = 20000
+                    splitsVC.receivedRace.runDistance = 5000
+                    
+                case 1:
+                    splitsVC.receivedRace.swimDistance = 1500
+                    splitsVC.receivedRace.bikeDistance = 40000
+                    splitsVC.receivedRace.runDistance = 10000
+                    
+                case 2:
+                    splitsVC.receivedRace.swimDistance = 2000
+                    splitsVC.receivedRace.bikeDistance = 90000
+                    splitsVC.receivedRace.runDistance = 21100
+                    
+                case 3:
+                    splitsVC.receivedRace.swimDistance = 3800
+                    splitsVC.receivedRace.bikeDistance = 180000
+                    splitsVC.receivedRace.runDistance = 42200
+                    
+                default:
+                    break
+                    
+                }
+                splitsVC.tableView.reloadData()
+            }
+        }
+    }
+    
     
     // Format time string
     func timeString(time: TimeInterval) -> String {
