@@ -32,7 +32,7 @@ class CalculatorView: UIViewController {
         menuView.layer.cornerRadius = 3
         menuView.layer.borderWidth = 1.5
         menuView.layer.borderColor = UIColor.systemGray3.cgColor
-    
+        
         
         // Remember last race distance and load it
         distanceSelector.selectedSegmentIndex = defaults.integer(forKey: "raceType")
@@ -94,41 +94,41 @@ class CalculatorView: UIViewController {
         
         let alert = UIAlertController(title: "Race name?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
+        
         alert.addTextField(configurationHandler: { textField in
             textField.placeholder = "Input the name of the race here"
         })
-
+        
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-
+            
             if let name = alert.textFields?.first?.text {
                 self.defaults.set(name, forKey: "raceName")
                 self.saveToCoreData()
             }
         }))
-
+        
         self.present(alert, animated: true)
     }
     
     //MARK: - Toggle menu
     @IBAction func menuButtonTapped(_ sender: Any) {
-
-            if menuShowing {
-                menuLeadingConstraint.constant = -260
-            } else {
-                menuLeadingConstraint.constant = 0
-                UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations: {
-                    self.view.layoutIfNeeded()
-                })
-            }
-            menuShowing = !menuShowing
-        }
         
-        override func viewWillDisappear(_ animated: Bool) {
+        if menuShowing {
             menuLeadingConstraint.constant = -260
-            menuShowing = false
+        } else {
+            menuLeadingConstraint.constant = 0
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations: {
+                self.view.layoutIfNeeded()
+            })
         }
-
+        menuShowing = !menuShowing
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        menuLeadingConstraint.constant = -260
+        menuShowing = false
+    }
+    
     func saveToCoreData() {
         
         if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
@@ -144,6 +144,30 @@ class CalculatorView: UIViewController {
             race.raceName = defaults.string(forKey: "raceName")
             race.totalTime = defaults.float(forKey: "totalRaceTime")
             
+            switch raceType {
+            case 0:
+                race.swimDistance = 500
+                race.bikeDistance = 20000
+                race.runDistance = 5000
+                
+            case 1:
+                race.swimDistance = 1500
+                race.bikeDistance = 40000
+                race.runDistance = 10000
+                
+            case 2:
+                race.swimDistance = 2000
+                race.bikeDistance = 90000
+                race.runDistance = 21100
+                
+            case 3:
+                race.swimDistance = 3800
+                race.bikeDistance = 180000
+                race.runDistance = 42200
+                
+            default:
+                break
+            }
             // Save to core data
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
         }

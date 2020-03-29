@@ -12,6 +12,7 @@ import CoreData
 class RaceSplitsTable: UITableViewController {
     
     var receivedRace = Race()
+    var raceFromCD: SavedRace? = nil
     var isSavedRace = false
     var swimTotalTime: Float = 0.0
     var bikeTotalTime: Float = 0.0
@@ -69,27 +70,42 @@ class RaceSplitsTable: UITableViewController {
         measurementFormatter.numberFormatter = numberFormatter
         timeFormatter.dateFormat = "HH:mm:ss"
         
+        // Load info from CoreData if user is viewing a previously saved race
         if isSavedRace {
             
-            title = "\(receivedRace.raceName)"
+            let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveToCoreData))
+            self.navigationItem.rightBarButtonItem = saveButton
             
-            t1Slider.setValue(receivedRace.t1Time, animated: false)
-            t1Pace.text = "T1: \(paceString(time: TimeInterval(receivedRace.t1Time))) mins"
-            
-            t2Slider.setValue(receivedRace.t2Time, animated: false)
-            t2Pace.text = "T2: \(paceString(time: TimeInterval(receivedRace.t2Time))) mins"
-            
-            swimSlider.setValue(receivedRace.swimPace.rounded(), animated: false)
-            swimPace.text = "Swim: \(paceString(time: TimeInterval(receivedRace.swimPace.rounded()))) /100 yds"
-            
-            bikeSlider.setValue(receivedRace.bikePace.rounded(), animated: false)
-            bikePace.text = "Bike: \(receivedRace.bikePace.rounded()) mph"
-            
-            runSlider.setValue(receivedRace.runPace, animated: false)
-            runPace.text = "Run: \(paceString(time: TimeInterval(receivedRace.runPace.rounded()))) /mile"
-            
+            if let selectedRace = raceFromCD {
+                
+                if let raceName = selectedRace.raceName {
+                    title = "\(raceName)"
+                }
+                t1Slider.setValue(selectedRace.t1Time, animated: false)
+                t1Pace.text = "T1: \(paceString(time: TimeInterval(selectedRace.t1Time))) mins"
+                
+                t2Slider.setValue(selectedRace.t2Time, animated: false)
+                t2Pace.text = "T2: \(paceString(time: TimeInterval(selectedRace.t2Time))) mins"
+                
+                swimSlider.setValue(selectedRace.swimPace.rounded(), animated: false)
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100 yds"
+                
+                bikeSlider.setValue(selectedRace.bikePace.rounded(), animated: false)
+                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) mph"
+                
+                runSlider.setValue(selectedRace.runPace, animated: false)
+                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /mile"
+                
+                
+                let formattedSwimDistance = Measurement(value: Double(selectedRace.swimDistance), unit: UnitLength.meters)
+                let formattedBikeDistance = Measurement(value: Double(selectedRace.bikeDistance), unit: UnitLength.meters)
+                let formattedRunDistance = Measurement(value: Double(selectedRace.runDistance), unit: UnitLength.meters)
+                
+                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+            }
         } else {
-            
             // Checks if this is the first time the app is being launched
             if defaults.bool(forKey: "First Launch") == true {
                 
@@ -138,18 +154,18 @@ class RaceSplitsTable: UITableViewController {
                     
                 }
                 
+                let formattedSwimDistance = Measurement(value: Double(receivedRace.swimDistance), unit: UnitLength.meters)
+                let formattedBikeDistance = Measurement(value: Double(receivedRace.bikeDistance), unit: UnitLength.meters)
+                let formattedRunDistance = Measurement(value: Double(receivedRace.runDistance), unit: UnitLength.meters)
+                
+                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                
                 defaults.set(true, forKey: "First Launch")
             }
         }
-        
-        let formattedSwimDistance = Measurement(value: Double(receivedRace.swimDistance), unit: UnitLength.meters)
-        let formattedBikeDistance = Measurement(value: Double(receivedRace.bikeDistance), unit: UnitLength.meters)
-        let formattedRunDistance = Measurement(value: Double(receivedRace.runDistance), unit: UnitLength.meters)
-        
-        swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-        bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-        runDistance.text = measurementFormatter.string(from: formattedRunDistance)
-        
+    
         calculateSplits()
         
         // Remove unused rows
@@ -302,6 +318,29 @@ class RaceSplitsTable: UITableViewController {
         }
         if isSavedRace == false {
             defaults.set(runSlider.value, forKey: "runPace")
+        }
+    }
+    
+    @objc func saveToCoreData() {
+        
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let updatedRace = raceFromCD {
+                
+                updatedRace.swimPace = swimSlider.value
+                updatedRace.t1Time = t1Slider.value
+                updatedRace.bikePace = bikeSlider.value
+                updatedRace.t2Time = t2Slider.value
+                updatedRace.runPace = runSlider.value
+//                updatedRace.totalTime = receivedRace.totalTime
+                
+                // Update core data
+                do {
+                    try context.save()
+                } catch {
+                    fatalError("Failure to save context: \(error)")
+                }
+                
+            }
         }
     }
 }

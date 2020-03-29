@@ -21,4 +21,5 @@ struct Race {
     var runPace: Float = 0.0
     var runTime: Float = 0.0
     var raceName = ""
+    var totalTime: Float = 0.0
 }
