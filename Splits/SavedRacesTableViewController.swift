@@ -12,8 +12,7 @@ class SavedRacesTableViewController: UITableViewController {
     
     var savedRacesFromCD = [SavedRace]()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
         
         title = "Saved Races"
         savedRacesFromCD.removeAll()
@@ -58,7 +57,6 @@ class SavedRacesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedRace = savedRacesFromCD[indexPath.row]
         performSegue(withIdentifier: "showSavedRace", sender: selectedRace)
-        print(selectedRace)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -71,7 +69,6 @@ class SavedRacesTableViewController: UITableViewController {
             }
         }
     }
-    
     
     // Format time string
     func timeString(time: TimeInterval) -> String {

@@ -48,35 +48,34 @@ class CalculatorView: UIViewController {
     
     @IBAction func didChangeRaceDistance(_ sender: Any) {
         
-        let raceDistanceVC = self.children.first as! RaceSplitsTable
+        let raceSplitsVC = self.children.first as! RaceSplitsTable
         
         switch distanceSelector.selectedSegmentIndex {
             
         case 0:
-            raceDistanceVC.receivedRace.swimDistance = 500
-            raceDistanceVC.receivedRace.bikeDistance = 20000
-            raceDistanceVC.receivedRace.runDistance = 5000
+            raceSplitsVC.receivedRace.swimDistance = 750
+            raceSplitsVC.receivedRace.bikeDistance = 20000
+            raceSplitsVC.receivedRace.runDistance = 5000
             
         case 1:
-            raceDistanceVC.receivedRace.swimDistance = 1500
-            raceDistanceVC.receivedRace.bikeDistance = 40000
-            raceDistanceVC.receivedRace.runDistance = 10000
+            raceSplitsVC.receivedRace.swimDistance = 1500
+            raceSplitsVC.receivedRace.bikeDistance = 40000
+            raceSplitsVC.receivedRace.runDistance = 10000
             
         case 2:
-            raceDistanceVC.receivedRace.swimDistance = 2000
-            raceDistanceVC.receivedRace.bikeDistance = 90000
-            raceDistanceVC.receivedRace.runDistance = 21100
+            raceSplitsVC.receivedRace.swimDistance = 2000
+            raceSplitsVC.receivedRace.bikeDistance = 90000
+            raceSplitsVC.receivedRace.runDistance = 21100
             
         case 3:
-            raceDistanceVC.receivedRace.swimDistance = 3800
-            raceDistanceVC.receivedRace.bikeDistance = 180000
-            raceDistanceVC.receivedRace.runDistance = 42200
+            raceSplitsVC.receivedRace.swimDistance = 3800
+            raceSplitsVC.receivedRace.bikeDistance = 180000
+            raceSplitsVC.receivedRace.runDistance = 42200
             
         default:
             break
         }
-        raceDistanceVC.tableView.reloadData()
-        raceDistanceVC.viewDidLoad()
+        raceSplitsVC.formatDistances()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -84,7 +83,7 @@ class CalculatorView: UIViewController {
         if (segue.identifier == "embeddedSegue") {
             
             let raceDistanceVC = segue.destination as! RaceSplitsTable
-            raceDistanceVC.receivedRace.swimDistance = 500
+            raceDistanceVC.receivedRace.swimDistance = 750
             raceDistanceVC.receivedRace.bikeDistance = 20000
             raceDistanceVC.receivedRace.runDistance = 5000
         }
@@ -96,18 +95,34 @@ class CalculatorView: UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         alert.addTextField(configurationHandler: { textField in
+            textField.autocapitalizationType = .words
             textField.placeholder = "Input the name of the race here"
         })
         
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
             
             if let name = alert.textFields?.first?.text {
-                self.defaults.set(name, forKey: "raceName")
-                self.saveToCoreData()
+                if name != "" {
+                    self.defaults.set(name, forKey: "raceName")
+                    self.saveToCoreData()
+                    self.confirmSave()
+                }
             }
         }))
-        
         self.present(alert, animated: true)
+    }
+    
+    func confirmSave() {
+        
+        let alert = UIAlertController(title: "Saved", message: nil, preferredStyle: .alert)
+        self.present(alert, animated: true)
+        
+        // Dismiss confirmation alert after 1 second
+        let when = DispatchTime.now() + 1
+        DispatchQueue.main.asyncAfter(deadline: when){
+            // your code with delay
+            alert.dismiss(animated: true, completion: nil)
+        }
     }
     
     //MARK: - Toggle menu

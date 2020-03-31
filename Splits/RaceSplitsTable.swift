@@ -11,24 +11,6 @@ import CoreData
 
 class RaceSplitsTable: UITableViewController {
     
-    var receivedRace = Race()
-    var raceFromCD: SavedRace? = nil
-    var isSavedRace = false
-    var swimTotalTime: Float = 0.0
-    var bikeTotalTime: Float = 0.0
-    var runTotalTime: Float = 0.0
-    var t1TotalTime: Float = 0.0
-    var t2TotalTime: Float = 0.0
-    let step: Float = 5
-    
-    let defaults = UserDefaults.standard
-    let notificationCentre = NotificationCenter.default
-    let locale = Locale.current
-    let distanceFormatter = LengthFormatter()
-    let timeFormatter = DateFormatter()
-    let measurementFormatter = MeasurementFormatter()
-    let numberFormatter = NumberFormatter()
-    
     @IBOutlet weak var swimPace: UILabel!
     @IBOutlet weak var swimTime: UILabel!
     @IBOutlet weak var swimDistance: UILabel!
@@ -48,6 +30,26 @@ class RaceSplitsTable: UITableViewController {
     @IBOutlet weak var runDistance: UILabel!
     @IBOutlet weak var runSlider: UISlider!
     @IBOutlet weak var totalTime: UILabel!
+    @IBOutlet weak var footerView: UIView!
+    
+    var receivedRace = Race()
+    var raceFromCD: SavedRace? = nil
+    var isSavedRace = false
+    var raceTotalTime: Float = 0.0
+    var swimTotalTime: Float = 0.0
+    var bikeTotalTime: Float = 0.0
+    var runTotalTime: Float = 0.0
+    var t1TotalTime: Float = 0.0
+    var t2TotalTime: Float = 0.0
+    let step: Float = 5
+    
+    let defaults = UserDefaults.standard
+    let notificationCentre = NotificationCenter.default
+    let locale = Locale.current
+    let distanceFormatter = LengthFormatter()
+    let timeFormatter = DateFormatter()
+    let measurementFormatter = MeasurementFormatter()
+    let numberFormatter = NumberFormatter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,110 +68,149 @@ class RaceSplitsTable: UITableViewController {
             slider?.maximumTrackTintColor = .systemGreen
         }
         
-        numberFormatter.maximumFractionDigits = 1
+        numberFormatter.maximumFractionDigits = 2
         measurementFormatter.numberFormatter = numberFormatter
         timeFormatter.dateFormat = "HH:mm:ss"
         
-        // Load info from CoreData if user is viewing a previously saved race
-        if isSavedRace {
-            
+        formatDistances()
+        
+        switch isSavedRace {
+        case true:
+            // Add save button to navbar
             let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveToCoreData))
             self.navigationItem.rightBarButtonItem = saveButton
             
-            if let selectedRace = raceFromCD {
+            // Load data from core data
+            loadSavedData()
+            
+        default:
+            switch defaults.bool(forKey: "First Launch") {
+            case true:
+                // Load from user defaults
+                loadUserDefaults()
+                footerView.isHidden = true
                 
-                if let raceName = selectedRace.raceName {
-                    title = "\(raceName)"
-                }
-                t1Slider.setValue(selectedRace.t1Time, animated: false)
-                t1Pace.text = "T1: \(paceString(time: TimeInterval(selectedRace.t1Time))) mins"
-                
-                t2Slider.setValue(selectedRace.t2Time, animated: false)
-                t2Pace.text = "T2: \(paceString(time: TimeInterval(selectedRace.t2Time))) mins"
-                
-                swimSlider.setValue(selectedRace.swimPace.rounded(), animated: false)
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100 yds"
-                
-                bikeSlider.setValue(selectedRace.bikePace.rounded(), animated: false)
-                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) mph"
-                
-                runSlider.setValue(selectedRace.runPace, animated: false)
-                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /mile"
-                
-                
-                let formattedSwimDistance = Measurement(value: Double(selectedRace.swimDistance), unit: UnitLength.meters)
-                let formattedBikeDistance = Measurement(value: Double(selectedRace.bikeDistance), unit: UnitLength.meters)
-                let formattedRunDistance = Measurement(value: Double(selectedRace.runDistance), unit: UnitLength.meters)
-                
-                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
-            }
-        } else {
-            // Checks if this is the first time the app is being launched
-            if defaults.bool(forKey: "First Launch") == true {
-                
-                t1Slider.setValue(defaults.float(forKey: "t1Pace"), animated: false)
-                t1Pace.text = "T1: \(paceString(time: TimeInterval(defaults.float(forKey: "t1Pace")))) mins"
-                
-                t2Slider.setValue(defaults.float(forKey: "t2Pace"), animated: false)
-                t2Pace.text = "T2: \(paceString(time: TimeInterval(defaults.float(forKey: "t2Pace")))) mins"
-                
-                swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100 yds"
-                
-                bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
-                bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) mph"
-                
-                runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
-                runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
-                
+            default:
+                // First launch
+                loadFirstLaunch()
                 defaults.set(true, forKey: "First Launch")
-                
-            } else {
-                
-                t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
-                t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
-                
-                if locale.usesMetricSystem == false {
-                    
-                    swimSlider.setValue(112.5, animated: false)
-                    swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
-                    
-                    bikeSlider.minimumValue = 10
-                    bikeSlider.maximumValue = 30
-                    bikeSlider.setValue(20, animated: false)
-                    bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
-                    
-                    runSlider.minimumValue = 300
-                    runSlider.maximumValue = 960
-                    runSlider.setValue(630, animated: false)
-                    runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
-                    
-                } else {
-                    
-                    swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
-                    bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
-                    runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
-                    
-                }
-                
-                let formattedSwimDistance = Measurement(value: Double(receivedRace.swimDistance), unit: UnitLength.meters)
-                let formattedBikeDistance = Measurement(value: Double(receivedRace.bikeDistance), unit: UnitLength.meters)
-                let formattedRunDistance = Measurement(value: Double(receivedRace.runDistance), unit: UnitLength.meters)
-                
-                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
-                
-                defaults.set(true, forKey: "First Launch")
+                footerView.isHidden = true
             }
         }
-    
         calculateSplits()
+    }
+    
+    func formatDistances() {
         
-        // Remove unused rows
-        tableView.tableFooterView = UIView()
+        switch isSavedRace {
+        case true:
+            if let race = raceFromCD {
+                let formattedSwimDistance = Measurement(value: Double(race.swimDistance), unit: UnitLength.meters)
+                let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
+                let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
+                
+                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+            }
+        default:
+            let race = receivedRace
+            let formattedSwimDistance = Measurement(value: Double(race.swimDistance), unit: UnitLength.meters)
+            let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
+            let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
+            
+            swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+            bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+            runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+        }
+        calculateSplits()
+    }
+    
+    
+    func loadFirstLaunch() {
+        
+        t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
+        t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
+        
+        switch locale.usesMetricSystem {
+        case true:
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
+            bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+        default:
+            setImperialSliderRange()
+            
+            swimSlider.setValue(112.5, animated: false)
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
+            
+            bikeSlider.setValue(20, animated: false)
+            bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
+            
+            runSlider.setValue(630, animated: false)
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+        }
+    }
+    
+    
+    func loadSavedData() {
+        
+        if let selectedRace = raceFromCD {
+            
+            if let raceName = selectedRace.raceName {
+                title = "\(raceName)"
+            }
+            t1Slider.setValue(selectedRace.t1Time, animated: false)
+            t1Pace.text = "T1: \(paceString(time: TimeInterval(selectedRace.t1Time))) mins"
+            
+            t2Slider.setValue(selectedRace.t2Time, animated: false)
+            t2Pace.text = "T2: \(paceString(time: TimeInterval(selectedRace.t2Time))) mins"
+            
+            switch locale.usesMetricSystem {
+            case true:
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100m"
+                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) kph"
+                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /km"
+            default:
+                setImperialSliderRange()
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100yds"
+                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) mph"
+                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /mile"
+            }
+            swimSlider.setValue(selectedRace.swimPace.rounded(), animated: false)
+            bikeSlider.setValue(selectedRace.bikePace.rounded(), animated: false)
+            runSlider.setValue(selectedRace.runPace.rounded(), animated: false)
+        }
+    }
+    
+    func loadUserDefaults() {
+        
+        // Check if the device uses metric system
+        switch locale.usesMetricSystem {
+        case true:
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100m"
+            bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) kph"
+            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /km"
+        default:
+            setImperialSliderRange()
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100yds"
+            bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) mph"
+            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
+        }
+        
+        // Set slider values
+        t1Slider.setValue(defaults.float(forKey: "t1Pace"), animated: false)
+        t2Slider.setValue(defaults.float(forKey: "t2Pace"), animated: false)
+        swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
+        bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
+        runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
+    }
+    
+    func setImperialSliderRange() {
+        bikeSlider.minimumValue = 10
+        bikeSlider.maximumValue = 30
+        
+        runSlider.minimumValue = 300
+        runSlider.maximumValue = 960
     }
     
     // Format pace string
@@ -191,40 +232,78 @@ class RaceSplitsTable: UITableViewController {
         return String(format: "%02i:%02i:%02i", hour, minute, second)
     }
     
-    func calculateSplits() {
+    func calculateSavedSplits() {
         
-        if locale.usesMetricSystem {
-            
-            let convertedSwimTime = (receivedRace.swimDistance / 100) * swimSlider.value
+        let savedRace = raceFromCD!
+        
+        switch locale.usesMetricSystem {
+        case true:
+            let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
             swimTotalTime = convertedSwimTime.rounded()
             
             let convertedBikeSpeed = bikeSlider.value.rounded() / 3.6 // kph to m/s
-            let bikeSplit = receivedRace.bikeDistance / convertedBikeSpeed
+            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
             bikeTotalTime = bikeSplit.rounded()
             
             let convertedRunSpeed = 16.667 / (runSlider.value.rounded() / 60) // m/km to m/s
-            let runSplit = receivedRace.runDistance / convertedRunSpeed
+            let runSplit = savedRace.runDistance / convertedRunSpeed
             runTotalTime = runSplit.rounded()
             
-            t1TotalTime = t1Slider.value
-            t2TotalTime = t2Slider.value
-            
-        } else {
-            
-            let convertedSwimTime = ((receivedRace.swimDistance * 1.094) / 100) * swimSlider.value.rounded() // Yds to meters
+        default:
+            let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value.rounded() // Yds to meters
             swimTotalTime = convertedSwimTime.rounded()
             
             let convertedBikeSpeed = bikeSlider.value.rounded() / 2.237 // mph to m/s
-            let bikeSplit = receivedRace.bikeDistance / convertedBikeSpeed
+            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
             bikeTotalTime = bikeSplit.rounded()
             
             let convertedRunSpeed = 26.822 / (runSlider.value.rounded() / 60) // m/mi to m/s
-            let runSplit = (receivedRace.runDistance) / convertedRunSpeed
+            let runSplit = (savedRace.runDistance) / convertedRunSpeed
+            runTotalTime = runSplit.rounded()
+        }
+    }
+    
+    func calculateUnsavedSplits() {
+        
+        let savedRace = receivedRace
+        
+        switch locale.usesMetricSystem {
+        case true:
+            let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
+            swimTotalTime = convertedSwimTime.rounded()
+            
+            let convertedBikeSpeed = bikeSlider.value.rounded() / 3.6 // kph to m/s
+            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
+            bikeTotalTime = bikeSplit.rounded()
+            
+            let convertedRunSpeed = 16.667 / (runSlider.value.rounded() / 60) // m/km to m/s
+            let runSplit = savedRace.runDistance / convertedRunSpeed
             runTotalTime = runSplit.rounded()
             
-            t1TotalTime = t1Slider.value
-            t2TotalTime = t2Slider.value
+        default:
+            let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value.rounded() // Yds to meters
+            swimTotalTime = convertedSwimTime.rounded()
             
+            let convertedBikeSpeed = bikeSlider.value.rounded() / 2.237 // mph to m/s
+            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
+            bikeTotalTime = bikeSplit.rounded()
+            
+            let convertedRunSpeed = 26.822 / (runSlider.value.rounded() / 60) // m/mi to m/s
+            let runSplit = (savedRace.runDistance) / convertedRunSpeed
+            runTotalTime = runSplit.rounded()
+        }
+    }
+    
+    func calculateSplits() {
+        
+        t1TotalTime = t1Slider.value
+        t2TotalTime = t2Slider.value
+        
+        switch isSavedRace {
+        case true:
+            calculateSavedSplits()
+        default:
+            calculateUnsavedSplits()
         }
         calculateTotalTime()
     }
@@ -238,6 +317,7 @@ class RaceSplitsTable: UITableViewController {
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
         t2Time.text = "\(timeString(time: TimeInterval(t2Slider.value)))"
         runTime.text = "\(timeString(time: TimeInterval(runTotalTime)))"
+        raceTotalTime = accumulateTime
         
         if isSavedRace == false {
             defaults.set(accumulateTime, forKey: "totalRaceTime")
@@ -287,6 +367,7 @@ class RaceSplitsTable: UITableViewController {
             bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
         }
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
+        
         if isSavedRace == false {
             defaults.set(bikeSlider.value, forKey: "bikePace")
         }
@@ -331,7 +412,7 @@ class RaceSplitsTable: UITableViewController {
                 updatedRace.bikePace = bikeSlider.value
                 updatedRace.t2Time = t2Slider.value
                 updatedRace.runPace = runSlider.value
-//                updatedRace.totalTime = receivedRace.totalTime
+                updatedRace.totalTime = raceTotalTime
                 
                 // Update core data
                 do {
@@ -339,9 +420,37 @@ class RaceSplitsTable: UITableViewController {
                 } catch {
                     fatalError("Failure to save context: \(error)")
                 }
-                
+            }
+            
+            let alert = UIAlertController(title: "Saved", message: nil, preferredStyle: .alert)
+            self.present(alert, animated: true)
+            
+            // Dismiss confirmation alert after 1 second
+            let when = DispatchTime.now() + 1
+            DispatchQueue.main.asyncAfter(deadline: when){
+                // your code with delay
+                alert.dismiss(animated: true, completion: nil)
             }
         }
+    }
+    
+    @IBAction func deleteFromCoreData(_ sender: Any) {
+        
+        let alert = UIAlertController(title: "Are you sure you want to delete?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                if let race = self.raceFromCD {
+                    context.delete(race)
+                    (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+                }
+            }
+            self.navigationController?.popViewController(animated: true)
+        }))
+        
+        self.present(alert, animated: true)
     }
 }
 
