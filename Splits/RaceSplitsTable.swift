@@ -327,6 +327,10 @@ class RaceSplitsTable: UITableViewController {
     // Update UI with slider values
     @IBAction func swimSliderChanged(_ sender: UISlider) {
         
+        // Increments of 5
+        let roundedSwimTime = round(swimSlider.value / step) * step
+        swimSlider.value = roundedSwimTime
+        
         calculateSplits()
         
         if locale.usesMetricSystem {
@@ -343,7 +347,7 @@ class RaceSplitsTable: UITableViewController {
     
     @IBAction func t1SliderChanged(_ sender: UISlider) {
         
-        // Increments of 5
+        // Increments of 5 seconds
         let roundedT1Time = round(t1Slider.value / step) * step
         
         t1Slider.value = roundedT1Time
@@ -389,6 +393,10 @@ class RaceSplitsTable: UITableViewController {
     }
     
     @IBAction func runSliderChanged(_ sender: UISlider) {
+        
+        // Increments of 5 seconds
+        let roundedRunTime = round(runSlider.value / step) * step
+        runSlider.value = roundedRunTime
         
         calculateSplits()
         
