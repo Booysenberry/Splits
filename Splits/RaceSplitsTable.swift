@@ -41,7 +41,8 @@ class RaceSplitsTable: UITableViewController {
     var runTotalTime: Float = 0.0
     var t1TotalTime: Float = 0.0
     var t2TotalTime: Float = 0.0
-    let step: Float = 5
+    let fiveSecondIncrements: Float = 5
+    let sixtySecondIncrements: Float = 60
     
     let defaults = UserDefaults.standard
     let notificationCentre = NotificationCenter.default
@@ -54,21 +55,26 @@ class RaceSplitsTable: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Displays slowest speed on left
-        swimSlider.semanticContentAttribute = .forceRightToLeft
-        runSlider.semanticContentAttribute = .forceRightToLeft
-        
         for slider in [swimSlider, runSlider] {
-            slider?.minimumTrackTintColor = .systemGreen
-            slider?.maximumTrackTintColor = .systemOrange
+            // Displays slowest speed on left
+            slider?.semanticContentAttribute = .forceRightToLeft
+            
+            slider?.minimumTrackTintColor = .white
+            slider?.maximumTrackTintColor = .white
+            slider?.minimumValueImage = UIImage(named: "rabbit")
+            slider?.maximumValueImage = UIImage(named: "tortoise")
+            slider?.thumbTintColor = .white
         }
         
         for slider in [bikeSlider, t1Slider, t2Slider] {
-            slider?.minimumTrackTintColor = .systemOrange
-            slider?.maximumTrackTintColor = .systemGreen
+            slider?.minimumTrackTintColor = .white
+            slider?.maximumTrackTintColor = .white
+            slider?.minimumValueImage = UIImage(named: "tortoise")
+            slider?.maximumValueImage = UIImage(named: "rabbit")
+            slider?.thumbTintColor = .white
         }
         
-        numberFormatter.maximumFractionDigits = 2
+        numberFormatter.maximumFractionDigits = 1
         measurementFormatter.numberFormatter = numberFormatter
         timeFormatter.dateFormat = "HH:mm:ss"
         
@@ -126,7 +132,6 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
     }
     
-    
     func loadFirstLaunch() {
         
         t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
@@ -135,7 +140,7 @@ class RaceSplitsTable: UITableViewController {
         switch locale.usesMetricSystem {
         case true:
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
-            bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
+            bikePace.text = "Bike: \(Int(bikeSlider.value)) kph"
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
         default:
             setImperialSliderRange()
@@ -144,13 +149,12 @@ class RaceSplitsTable: UITableViewController {
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
             
             bikeSlider.setValue(20, animated: false)
-            bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
+            bikePace.text = "Bike: \(Int(bikeSlider.value)) mph"
             
             runSlider.setValue(630, animated: false)
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
         }
     }
-    
     
     func loadSavedData() {
         
@@ -168,12 +172,12 @@ class RaceSplitsTable: UITableViewController {
             switch locale.usesMetricSystem {
             case true:
                 swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100m"
-                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) kph"
+                bikePace.text = "Bike: \(Int(selectedRace.bikePace)) kph"
                 runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /km"
             default:
                 setImperialSliderRange()
                 swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100yds"
-                bikePace.text = "Bike: \(selectedRace.bikePace.rounded()) mph"
+                bikePace.text = "Bike: \(Int(selectedRace.bikePace)) mph"
                 runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /mile"
             }
             swimSlider.setValue(selectedRace.swimPace.rounded(), animated: false)
@@ -184,16 +188,19 @@ class RaceSplitsTable: UITableViewController {
     
     func loadUserDefaults() {
         
+        t1Pace.text = "T1: \(paceString(time: TimeInterval(defaults.float(forKey: "t1Pace")))) mins"
+        t2Pace.text = "T2: \(paceString(time: TimeInterval(defaults.float(forKey: "t2Pace")))) mins"
+        
         // Check if the device uses metric system
         switch locale.usesMetricSystem {
         case true:
             swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100m"
-            bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) kph"
+            bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) kph"
             runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /km"
         default:
             setImperialSliderRange()
             swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100yds"
-            bikePace.text = "Bike: \(defaults.float(forKey: "bikePace").rounded()) mph"
+            bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) mph"
             runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
         }
         
@@ -328,7 +335,7 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func swimSliderChanged(_ sender: UISlider) {
         
         // Increments of 5
-        let roundedSwimTime = round(swimSlider.value / step) * step
+        let roundedSwimTime = round(swimSlider.value / fiveSecondIncrements) * fiveSecondIncrements
         swimSlider.value = roundedSwimTime
         
         calculateSplits()
@@ -348,7 +355,7 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func t1SliderChanged(_ sender: UISlider) {
         
         // Increments of 5 seconds
-        let roundedT1Time = round(t1Slider.value / step) * step
+        let roundedT1Time = round(t1Slider.value / sixtySecondIncrements) * sixtySecondIncrements
         
         t1Slider.value = roundedT1Time
         t1TotalTime = roundedT1Time
@@ -366,9 +373,9 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
         
         if locale.usesMetricSystem {
-            bikePace.text = "Bike: \(bikeSlider.value.rounded()) kph"
+            bikePace.text = "Bike: \(Int(bikeSlider.value)) kph"
         } else {
-            bikePace.text = "Bike: \(bikeSlider.value.rounded()) mph"
+            bikePace.text = "Bike: \(Int(bikeSlider.value)) mph"
         }
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
         
@@ -380,11 +387,11 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func t2SliderChanged(_ sender: UISlider) {
         
         // Increments of 5
-        let roundedT2Time = round(t2Slider.value / step) * step
+        let roundedT2Time = round(t2Slider.value / sixtySecondIncrements) * sixtySecondIncrements
         
         t2Slider.value = roundedT2Time
         t2TotalTime = roundedT2Time
-        t2Pace.text = "T1: \(paceString(time: TimeInterval(t2Slider.value))) mins"
+        t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
         
         if isSavedRace == false {
             defaults.set(t2Slider.value, forKey: "t2Pace")
@@ -395,7 +402,7 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func runSliderChanged(_ sender: UISlider) {
         
         // Increments of 5 seconds
-        let roundedRunTime = round(runSlider.value / step) * step
+        let roundedRunTime = round(runSlider.value / fiveSecondIncrements) * fiveSecondIncrements
         runSlider.value = roundedRunTime
         
         calculateSplits()

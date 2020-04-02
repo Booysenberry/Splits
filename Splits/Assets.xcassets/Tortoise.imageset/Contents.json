@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "menu-light-1.png",
+      "filename" : "Tortoise.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "menu-light@2x-1.png",
+      "filename" : "Tortoise@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "menu-light@3x-1.png",
+      "filename" : "Tortoise@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
