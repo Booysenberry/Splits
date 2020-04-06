@@ -32,6 +32,7 @@ class RaceSplitsTable: UITableViewController {
     @IBOutlet weak var totalTime: UILabel!
     @IBOutlet weak var footerView: UIView!
     
+    var usesMetricUnits = false
     var receivedRace = Race()
     var raceFromCD: SavedRace? = nil
     var isSavedRace = false
@@ -52,26 +53,27 @@ class RaceSplitsTable: UITableViewController {
     let measurementFormatter = MeasurementFormatter()
     let numberFormatter = NumberFormatter()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        
+        checkUserSetUnits()
         
         for slider in [swimSlider, runSlider] {
             // Displays slowest speed on left
             slider?.semanticContentAttribute = .forceRightToLeft
             
-            slider?.minimumTrackTintColor = .white
-            slider?.maximumTrackTintColor = .white
+            slider?.minimumTrackTintColor = .systemGray2
+            slider?.maximumTrackTintColor = .systemTeal
             slider?.minimumValueImage = UIImage(named: "rabbit")
             slider?.maximumValueImage = UIImage(named: "tortoise")
-            slider?.thumbTintColor = .white
+            slider?.thumbTintColor = .systemTeal
         }
         
         for slider in [bikeSlider, t1Slider, t2Slider] {
-            slider?.minimumTrackTintColor = .white
-            slider?.maximumTrackTintColor = .white
+            slider?.minimumTrackTintColor = .systemTeal
+            slider?.maximumTrackTintColor = .systemGray2
             slider?.minimumValueImage = UIImage(named: "tortoise")
             slider?.maximumValueImage = UIImage(named: "rabbit")
-            slider?.thumbTintColor = .white
+            slider?.thumbTintColor = .systemTeal
         }
         
         numberFormatter.maximumFractionDigits = 1
@@ -106,6 +108,17 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
     }
     
+    func checkUserSetUnits() {
+        switch defaults.bool(forKey: "usesMetricSystem") {
+        case true:
+            usesMetricUnits = true
+            
+        default:
+            usesMetricUnits = false
+            
+        }
+    }
+    
     func formatDistances() {
         
         switch isSavedRace {
@@ -137,7 +150,7 @@ class RaceSplitsTable: UITableViewController {
         t1Pace.text = "T1: \(paceString(time: TimeInterval(t1Slider.value))) mins"
         t2Pace.text = "T2: \(paceString(time: TimeInterval(t2Slider.value))) mins"
         
-        switch locale.usesMetricSystem {
+        switch usesMetricUnits {
         case true:
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
             bikePace.text = "Bike: \(Int(bikeSlider.value)) kph"
@@ -169,7 +182,7 @@ class RaceSplitsTable: UITableViewController {
             t2Slider.setValue(selectedRace.t2Time, animated: false)
             t2Pace.text = "T2: \(paceString(time: TimeInterval(selectedRace.t2Time))) mins"
             
-            switch locale.usesMetricSystem {
+            switch usesMetricUnits {
             case true:
                 swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100m"
                 bikePace.text = "Bike: \(Int(selectedRace.bikePace)) kph"
@@ -192,7 +205,7 @@ class RaceSplitsTable: UITableViewController {
         t2Pace.text = "T2: \(paceString(time: TimeInterval(defaults.float(forKey: "t2Pace")))) mins"
         
         // Check if the device uses metric system
-        switch locale.usesMetricSystem {
+        switch usesMetricUnits {
         case true:
             swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100m"
             bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) kph"
@@ -210,6 +223,8 @@ class RaceSplitsTable: UITableViewController {
         swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
         bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
         runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
+        
+        tableView.reloadData()
     }
     
     func setImperialSliderRange() {
@@ -243,7 +258,7 @@ class RaceSplitsTable: UITableViewController {
         
         let savedRace = raceFromCD!
         
-        switch locale.usesMetricSystem {
+        switch usesMetricUnits {
         case true:
             let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
             swimTotalTime = convertedSwimTime.rounded()
@@ -274,7 +289,7 @@ class RaceSplitsTable: UITableViewController {
         
         let savedRace = receivedRace
         
-        switch locale.usesMetricSystem {
+        switch usesMetricUnits {
         case true:
             let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
             swimTotalTime = convertedSwimTime.rounded()
@@ -340,7 +355,7 @@ class RaceSplitsTable: UITableViewController {
         
         calculateSplits()
         
-        if locale.usesMetricSystem {
+        if usesMetricUnits {
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) / 100m"
         } else {
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) / 100 yds"
@@ -372,7 +387,7 @@ class RaceSplitsTable: UITableViewController {
         
         calculateSplits()
         
-        if locale.usesMetricSystem {
+        if usesMetricUnits {
             bikePace.text = "Bike: \(Int(bikeSlider.value)) kph"
         } else {
             bikePace.text = "Bike: \(Int(bikeSlider.value)) mph"
@@ -407,7 +422,7 @@ class RaceSplitsTable: UITableViewController {
         
         calculateSplits()
         
-        if locale.usesMetricSystem {
+        if usesMetricUnits {
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
         } else {
             runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
