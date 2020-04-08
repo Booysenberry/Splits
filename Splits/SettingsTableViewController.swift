@@ -12,53 +12,54 @@ class SettingsTableViewController: UITableViewController {
     
     let locale = Locale.current
     let defaults = UserDefaults.standard
-    var usesMetricSystem: Bool? = nil
+    var usesMetricSystem = true
     
     @IBOutlet weak var imperialCell: UITableViewCell!
     @IBOutlet weak var metricCell: UITableViewCell!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    
+    override func viewWillAppear(_ animated: Bool) {
         title = "Settings"
         
-        if usesMetricSystem != nil {
-            setInitialUnits()
-        } else {
-            setSavedDefaults()
-        }
+        setUnits()
+    
     }
     
-    func setInitialUnits() {
+    func setUnits() {
         switch locale.usesMetricSystem {
-        case true :
-            metricCell.accessoryType = .checkmark
-            imperialCell.accessoryType = .none
-            usesMetricSystem = true
+        case true:
+            setMetricUnits()
         default:
-            imperialCell.accessoryType = .checkmark
-            metricCell.accessoryType = .none
-            usesMetricSystem = false
+            setImperialUnits()
         }
+        checkUserDefaults()
     }
     
-    func setSavedDefaults() {
+    func checkUserDefaults() {
         switch defaults.bool(forKey: "usesMetricSystem") {
         case true:
-            metricCell.accessoryType = .checkmark
-            imperialCell.accessoryType = .none
+            setMetricUnits()
         default:
-            imperialCell.accessoryType = .checkmark
-            metricCell.accessoryType = .none
+            setImperialUnits()
         }
     }
+    
+    func setMetricUnits() {
+        metricCell.accessoryType = .checkmark
+        imperialCell.accessoryType = .none
+    }
+    
+    func setImperialUnits() {
+        imperialCell.accessoryType = .checkmark
+        metricCell.accessoryType = .none
+    }
 
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
     }
@@ -68,14 +69,13 @@ class SettingsTableViewController: UITableViewController {
         case 0:
             usesMetricSystem = false
             defaults.set(usesMetricSystem, forKey: "usesMetricSystem")
-            imperialCell.accessoryType = .checkmark
-            metricCell.accessoryType = .none
+            setImperialUnits()
             
         default:
             usesMetricSystem = true
             defaults.set(usesMetricSystem, forKey: "usesMetricSystem")
-            metricCell.accessoryType = .checkmark
-            imperialCell.accessoryType = .none
+            setMetricUnits()
+            
         }
     }
 }

@@ -48,7 +48,7 @@ class RaceSplitsTable: UITableViewController {
     let defaults = UserDefaults.standard
     let notificationCentre = NotificationCenter.default
     let locale = Locale.current
-    let distanceFormatter = LengthFormatter()
+//    let distanceFormatter = LengthFormatter()
     let timeFormatter = DateFormatter()
     let measurementFormatter = MeasurementFormatter()
     let numberFormatter = NumberFormatter()
@@ -56,6 +56,7 @@ class RaceSplitsTable: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         
         checkUserSetUnits()
+        
         
         for slider in [swimSlider, runSlider] {
             // Displays slowest speed on left
@@ -75,9 +76,6 @@ class RaceSplitsTable: UITableViewController {
             slider?.maximumValueImage = UIImage(named: "rabbit")
             slider?.thumbTintColor = .systemTeal
         }
-        
-        numberFormatter.maximumFractionDigits = 1
-        measurementFormatter.numberFormatter = numberFormatter
         timeFormatter.dateFormat = "HH:mm:ss"
         
         formatDistances()
@@ -108,11 +106,13 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
     }
     
+    // Checks if the user has set a unit measurement preference
     func checkUserSetUnits() {
         switch defaults.bool(forKey: "usesMetricSystem") {
         case true:
             usesMetricUnits = true
-            
+
+
         default:
             usesMetricUnits = false
             
@@ -128,9 +128,24 @@ class RaceSplitsTable: UITableViewController {
                 let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
                 let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
                 
-                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                // Uses preferred unit measurement if changed by the user in settings
+                if usesMetricUnits {
+                    measurementFormatter.locale = Locale(identifier: "EN_NZ")
+                    numberFormatter.maximumFractionDigits = 2
+                    measurementFormatter.numberFormatter = numberFormatter
+ 
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                } else {
+                    measurementFormatter.locale = locale
+                    numberFormatter.maximumFractionDigits = 1
+                    measurementFormatter.numberFormatter = numberFormatter
+                    
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                }
             }
         default:
             let race = receivedRace
@@ -138,9 +153,24 @@ class RaceSplitsTable: UITableViewController {
             let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
             let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
             
-            swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-            bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-            runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+            // Uses preferred unit measurement if changed by the user in settings
+            if usesMetricUnits {
+                measurementFormatter.locale = Locale(identifier: "EN_NZ")
+                numberFormatter.maximumFractionDigits = 2
+                measurementFormatter.numberFormatter = numberFormatter
+    
+                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+            } else {
+                measurementFormatter.locale = locale
+                numberFormatter.maximumFractionDigits = 1
+                measurementFormatter.numberFormatter = numberFormatter
+
+                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+            }
         }
         calculateSplits()
     }

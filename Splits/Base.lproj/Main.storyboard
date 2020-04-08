@@ -78,11 +78,14 @@
                                 <action selector="menuButtonTapped:" destination="BYZ-38-t0r" id="6LJ-v8-hfO"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="hUk-Sr-OXv">
-                            <connections>
-                                <action selector="saveRace:" destination="BYZ-38-t0r" id="2RC-vA-WCC"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="save" id="hUk-Sr-OXv">
+                                <connections>
+                                    <action selector="saveRace:" destination="BYZ-38-t0r" id="2RC-vA-WCC"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="info" id="Peb-fZ-1zu"/>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="distanceSelector" destination="20W-7s-EgH" id="f69-cn-ZMm"/>
@@ -669,6 +672,7 @@
         <segue reference="x7o-vP-Gib"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <image name="info" width="22" height="22"/>
         <image name="menu" width="22" height="22"/>
     </resources>
 </document>
