@@ -161,7 +161,7 @@ class CalculatorView: UIViewController {
             
             switch raceType {
             case 0:
-                race.swimDistance = 500
+                race.swimDistance = 750
                 race.bikeDistance = 20000
                 race.runDistance = 5000
                 

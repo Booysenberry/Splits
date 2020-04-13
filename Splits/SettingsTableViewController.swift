@@ -13,31 +13,40 @@ class SettingsTableViewController: UITableViewController {
     let locale = Locale.current
     let defaults = UserDefaults.standard
     var usesMetricSystem = true
+    var hasChangedUnits = false
     
     @IBOutlet weak var imperialCell: UITableViewCell!
     @IBOutlet weak var metricCell: UITableViewCell!
     
     override func viewWillAppear(_ animated: Bool) {
-        title = "Settings"
         
-        setUnits()
+        title = "Settings"
+        checkIfUserHasChangedUnits()
+    }
     
+    func checkIfUserHasChangedUnits() {
+        switch defaults.bool(forKey: "hasChangedUnits") {
+        case true:
+            setUserDefaults()
+        default:
+            setUnits()
+        }
+    }
+    
+    func setUserDefaults() {
+        switch defaults.bool(forKey: "usesMetricSystem") {
+        case true:
+            setMetricUnits()
+        default:
+            setImperialUnits()
+        }
     }
     
     func setUnits() {
         switch locale.usesMetricSystem {
         case true:
             setMetricUnits()
-        default:
-            setImperialUnits()
-        }
-        checkUserDefaults()
-    }
-    
-    func checkUserDefaults() {
-        switch defaults.bool(forKey: "usesMetricSystem") {
-        case true:
-            setMetricUnits()
+            defaults.set(usesMetricSystem, forKey: "usesMetricSystem")
         default:
             setImperialUnits()
         }
@@ -52,7 +61,6 @@ class SettingsTableViewController: UITableViewController {
         imperialCell.accessoryType = .checkmark
         metricCell.accessoryType = .none
     }
-
     
     // MARK: - Table view data source
     
@@ -75,7 +83,18 @@ class SettingsTableViewController: UITableViewController {
             usesMetricSystem = true
             defaults.set(usesMetricSystem, forKey: "usesMetricSystem")
             setMetricUnits()
-            
+        }
+        hasChangedUnits = true
+        hasSaved()
+        
+    }
+    
+    func hasSaved() {
+        switch hasChangedUnits {
+        case true:
+            defaults.set(hasChangedUnits, forKey: "hasChangedUnits")
+        default:
+            break
         }
     }
 }

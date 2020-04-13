@@ -32,7 +32,8 @@ class RaceSplitsTable: UITableViewController {
     @IBOutlet weak var totalTime: UILabel!
     @IBOutlet weak var footerView: UIView!
     
-    var usesMetricUnits = false
+    var hasChangedUnits = false
+    var usesMetricUnits = true
     var receivedRace = Race()
     var raceFromCD: SavedRace? = nil
     var isSavedRace = false
@@ -48,15 +49,14 @@ class RaceSplitsTable: UITableViewController {
     let defaults = UserDefaults.standard
     let notificationCentre = NotificationCenter.default
     let locale = Locale.current
-//    let distanceFormatter = LengthFormatter()
     let timeFormatter = DateFormatter()
     let measurementFormatter = MeasurementFormatter()
     let numberFormatter = NumberFormatter()
     
     override func viewWillAppear(_ animated: Bool) {
         
-        checkUserSetUnits()
-        
+        // Checks if the user has changed measurement units
+        checkForPreferredUnits()
         
         for slider in [swimSlider, runSlider] {
             // Displays slowest speed on left
@@ -76,6 +76,7 @@ class RaceSplitsTable: UITableViewController {
             slider?.maximumValueImage = UIImage(named: "rabbit")
             slider?.thumbTintColor = .systemTeal
         }
+        
         timeFormatter.dateFormat = "HH:mm:ss"
         
         formatDistances()
@@ -106,16 +107,24 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
     }
     
-    // Checks if the user has set a unit measurement preference
-    func checkUserSetUnits() {
+    // Checks if the user has changed measurement units
+    func checkForPreferredUnits() {
+        switch defaults.bool(forKey: "hasChangedUnits") {
+        case true:
+            hasChangedUnits = true
+            setPreferredUnits()
+        default:
+            usesMetricUnits = locale.usesMetricSystem
+        }
+    }
+    
+    // Set preferred measurement units if previously changed by the user
+    func setPreferredUnits() {
         switch defaults.bool(forKey: "usesMetricSystem") {
         case true:
             usesMetricUnits = true
-
-
         default:
             usesMetricUnits = false
-            
         }
     }
     
@@ -128,23 +137,50 @@ class RaceSplitsTable: UITableViewController {
                 let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
                 let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
                 
-                // Uses preferred unit measurement if changed by the user in settings
-                if usesMetricUnits {
-                    measurementFormatter.locale = Locale(identifier: "EN_NZ")
-                    numberFormatter.maximumFractionDigits = 2
-                    measurementFormatter.numberFormatter = numberFormatter
- 
-                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
-                } else {
-                    measurementFormatter.locale = locale
-                    numberFormatter.maximumFractionDigits = 1
-                    measurementFormatter.numberFormatter = numberFormatter
-                    
-                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                // Display preferred unit measurement if changed by the user in settings
+                switch usesMetricUnits {
+                case true:
+                    if locale.usesMetricSystem {
+                        measurementFormatter.locale = locale
+                        numberFormatter.maximumFractionDigits = 2
+                        measurementFormatter.numberFormatter = numberFormatter
+
+                        swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                        bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                        runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                        
+                    } else {
+                        measurementFormatter.locale = Locale(identifier: "EN_NZ")
+                        numberFormatter.maximumFractionDigits = 2
+                        measurementFormatter.numberFormatter = numberFormatter
+                        
+                        measurementFormatter.numberFormatter = numberFormatter
+                        swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                        bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                        runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                    }
+
+                case false:
+                    if locale.usesMetricSystem == false {
+                        measurementFormatter.locale = locale
+                        numberFormatter.maximumFractionDigits = 1
+                        measurementFormatter.numberFormatter = numberFormatter
+                        
+                        measurementFormatter.numberFormatter = numberFormatter
+                        swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                        bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                        runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                        
+                    } else {
+                        measurementFormatter.locale = Locale(identifier: "EN_US")
+                        numberFormatter.maximumFractionDigits = 1
+                        measurementFormatter.numberFormatter = numberFormatter
+                        
+                        measurementFormatter.numberFormatter = numberFormatter
+                        swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                        bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                        runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                    }
                 }
             }
         default:
@@ -153,23 +189,50 @@ class RaceSplitsTable: UITableViewController {
             let formattedBikeDistance = Measurement(value: Double(race.bikeDistance), unit: UnitLength.meters)
             let formattedRunDistance = Measurement(value: Double(race.runDistance), unit: UnitLength.meters)
             
-            // Uses preferred unit measurement if changed by the user in settings
-            if usesMetricUnits {
-                measurementFormatter.locale = Locale(identifier: "EN_NZ")
-                numberFormatter.maximumFractionDigits = 2
-                measurementFormatter.numberFormatter = numberFormatter
-    
-                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
-            } else {
-                measurementFormatter.locale = locale
-                numberFormatter.maximumFractionDigits = 1
-                measurementFormatter.numberFormatter = numberFormatter
+            // Display preferred unit measurement if changed by the user in settings
+            switch usesMetricUnits {
+            case true:
+                if locale.usesMetricSystem {
+                    measurementFormatter.locale = locale
+                    numberFormatter.maximumFractionDigits = 2
+                    measurementFormatter.numberFormatter = numberFormatter
 
-                swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
-                bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
-                runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                    
+                } else {
+                    measurementFormatter.locale = Locale(identifier: "EN_NZ")
+                    numberFormatter.maximumFractionDigits = 2
+                    measurementFormatter.numberFormatter = numberFormatter
+                    
+                    measurementFormatter.numberFormatter = numberFormatter
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                }
+
+            case false:
+                if locale.usesMetricSystem == false {
+                    measurementFormatter.locale = locale
+                    numberFormatter.maximumFractionDigits = 1
+                    measurementFormatter.numberFormatter = numberFormatter
+                    
+                    measurementFormatter.numberFormatter = numberFormatter
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                    
+                } else {
+                    measurementFormatter.locale = Locale(identifier: "EN_US")
+                    numberFormatter.maximumFractionDigits = 1
+                    measurementFormatter.numberFormatter = numberFormatter
+                    
+                    measurementFormatter.numberFormatter = numberFormatter
+                    swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
+                    bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
+                    runDistance.text = measurementFormatter.string(from: formattedRunDistance)
+                }
             }
         }
         calculateSplits()
@@ -184,19 +247,25 @@ class RaceSplitsTable: UITableViewController {
         case true:
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100m"
             bikePace.text = "Bike: \(Int(bikeSlider.value)) kph"
-            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value))) /km"
         default:
             setImperialSliderRange()
             
-            swimSlider.setValue(112.5, animated: false)
+            swimSlider.setValue(150, animated: false)
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) /100 yds"
             
             bikeSlider.setValue(20, animated: false)
             bikePace.text = "Bike: \(Int(bikeSlider.value)) mph"
             
             runSlider.setValue(630, animated: false)
-            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value))) /mile"
         }
+        // Save to defaults if user doesn't change slider values before closing the app
+        defaults.set(swimSlider.value, forKey: "swimPace")
+        defaults.set(t1Slider.value, forKey: "t1Pace")
+        defaults.set(bikeSlider.value, forKey: "bikePace")
+        defaults.set(t2Slider.value, forKey: "t2Pace")
+        defaults.set(runSlider.value, forKey: "runPace")
     }
     
     func loadSavedData() {
@@ -214,18 +283,18 @@ class RaceSplitsTable: UITableViewController {
             
             switch usesMetricUnits {
             case true:
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100m"
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace))) /100m"
                 bikePace.text = "Bike: \(Int(selectedRace.bikePace)) kph"
-                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /km"
+                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace))) /km"
             default:
                 setImperialSliderRange()
-                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace.rounded()))) /100yds"
+                swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace))) /100yds"
                 bikePace.text = "Bike: \(Int(selectedRace.bikePace)) mph"
-                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace.rounded()))) /mile"
+                runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace))) /mile"
             }
-            swimSlider.setValue(selectedRace.swimPace.rounded(), animated: false)
-            bikeSlider.setValue(selectedRace.bikePace.rounded(), animated: false)
-            runSlider.setValue(selectedRace.runPace.rounded(), animated: false)
+            swimSlider.setValue(selectedRace.swimPace, animated: false)
+            bikeSlider.setValue(selectedRace.bikePace, animated: false)
+            runSlider.setValue(selectedRace.runPace, animated: false)
         }
     }
     
@@ -237,27 +306,26 @@ class RaceSplitsTable: UITableViewController {
         // Check if the device uses metric system
         switch usesMetricUnits {
         case true:
-            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100m"
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace")))) /100m"
             bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) kph"
-            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /km"
+            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace")))) /km"
         default:
             setImperialSliderRange()
-            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace").rounded()))) /100yds"
+            swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace")))) /100yds"
             bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) mph"
-            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace").rounded()))) /mile"
+            runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace")))) /mile"
         }
         
         // Set slider values
         t1Slider.setValue(defaults.float(forKey: "t1Pace"), animated: false)
         t2Slider.setValue(defaults.float(forKey: "t2Pace"), animated: false)
-        swimSlider.setValue(defaults.float(forKey: "swimPace").rounded(), animated: false)
-        bikeSlider.setValue(defaults.float(forKey: "bikePace").rounded(), animated: false)
+        swimSlider.setValue(defaults.float(forKey: "swimPace"), animated: false)
+        bikeSlider.setValue(defaults.float(forKey: "bikePace"), animated: false)
         runSlider.setValue(defaults.float(forKey: "runPace"), animated: false)
-        
-        tableView.reloadData()
     }
     
     func setImperialSliderRange() {
+        
         bikeSlider.minimumValue = 10
         bikeSlider.maximumValue = 30
         
@@ -290,59 +358,59 @@ class RaceSplitsTable: UITableViewController {
         
         switch usesMetricUnits {
         case true:
-            let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
-            swimTotalTime = convertedSwimTime.rounded()
+            let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value
+            swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value.rounded() / 3.6 // kph to m/s
+            let convertedBikeSpeed = bikeSlider.value.rounded(.down) / 3.6 // kph to m/s
             let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
-            bikeTotalTime = bikeSplit.rounded()
+            bikeTotalTime = bikeSplit
             
-            let convertedRunSpeed = 16.667 / (runSlider.value.rounded() / 60) // m/km to m/s
+            let convertedRunSpeed = 16.667 / (runSlider.value / 60) // m/km to m/s
             let runSplit = savedRace.runDistance / convertedRunSpeed
-            runTotalTime = runSplit.rounded()
+            runTotalTime = runSplit
             
         default:
-            let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value.rounded() // Yds to meters
-            swimTotalTime = convertedSwimTime.rounded()
+            let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value // Yds to meters
+            swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value.rounded() / 2.237 // mph to m/s
+            let convertedBikeSpeed = bikeSlider.value / 2.237 // mph to m/s
             let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
-            bikeTotalTime = bikeSplit.rounded()
+            bikeTotalTime = bikeSplit
             
-            let convertedRunSpeed = 26.822 / (runSlider.value.rounded() / 60) // m/mi to m/s
+            let convertedRunSpeed = 26.822 / (runSlider.value / 60) // m/mi to m/s
             let runSplit = (savedRace.runDistance) / convertedRunSpeed
-            runTotalTime = runSplit.rounded()
+            runTotalTime = runSplit
         }
     }
     
     func calculateUnsavedSplits() {
         
-        let savedRace = receivedRace
+        let currentRace = receivedRace
         
         switch usesMetricUnits {
         case true:
-            let convertedSwimTime = (savedRace.swimDistance / 100) * swimSlider.value.rounded()
-            swimTotalTime = convertedSwimTime.rounded()
+            let convertedSwimTime = (currentRace.swimDistance / 100) * swimSlider.value
+            swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value.rounded() / 3.6 // kph to m/s
-            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
-            bikeTotalTime = bikeSplit.rounded()
+            let convertedBikeSpeed = bikeSlider.value.rounded(.down) / 3.6 // kph to m/s
+            let bikeSplit = currentRace.bikeDistance / convertedBikeSpeed
+            bikeTotalTime = bikeSplit
             
-            let convertedRunSpeed = 16.667 / (runSlider.value.rounded() / 60) // m/km to m/s
-            let runSplit = savedRace.runDistance / convertedRunSpeed
-            runTotalTime = runSplit.rounded()
+            let convertedRunSpeed = 16.667 / (runSlider.value / 60) // m/km to m/s
+            let runSplit = currentRace.runDistance / convertedRunSpeed
+            runTotalTime = runSplit
             
         default:
-            let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value.rounded() // Yds to meters
-            swimTotalTime = convertedSwimTime.rounded()
+            let convertedSwimTime = ((currentRace.swimDistance * 1.094) / 100) * swimSlider.value // Yds to meters
+            swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value.rounded() / 2.237 // mph to m/s
-            let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
-            bikeTotalTime = bikeSplit.rounded()
+            let convertedBikeSpeed = bikeSlider.value / 2.237 // mph to m/s
+            let bikeSplit = currentRace.bikeDistance / convertedBikeSpeed
+            bikeTotalTime = bikeSplit
             
-            let convertedRunSpeed = 26.822 / (runSlider.value.rounded() / 60) // m/mi to m/s
-            let runSplit = (savedRace.runDistance) / convertedRunSpeed
-            runTotalTime = runSplit.rounded()
+            let convertedRunSpeed = 26.822 / (runSlider.value / 60) // m/mi to m/s
+            let runSplit = (currentRace.runDistance) / convertedRunSpeed
+            runTotalTime = runSplit
         }
     }
     
@@ -453,9 +521,9 @@ class RaceSplitsTable: UITableViewController {
         calculateSplits()
         
         if usesMetricUnits {
-            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /km"
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value))) /km"
         } else {
-            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value.rounded()))) /mile"
+            runPace.text = "Run: \(paceString(time: TimeInterval(runSlider!.value))) /mile"
         }
         if isSavedRace == false {
             defaults.set(runSlider.value, forKey: "runPace")
