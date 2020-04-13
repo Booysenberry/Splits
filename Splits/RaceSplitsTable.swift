@@ -373,7 +373,7 @@ class RaceSplitsTable: UITableViewController {
             let convertedSwimTime = ((savedRace.swimDistance * 1.094) / 100) * swimSlider.value // Yds to meters
             swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value / 2.237 // mph to m/s
+            let convertedBikeSpeed = bikeSlider.value.rounded(.down) / 2.237 // mph to m/s
             let bikeSplit = savedRace.bikeDistance / convertedBikeSpeed
             bikeTotalTime = bikeSplit
             
@@ -404,7 +404,7 @@ class RaceSplitsTable: UITableViewController {
             let convertedSwimTime = ((currentRace.swimDistance * 1.094) / 100) * swimSlider.value // Yds to meters
             swimTotalTime = convertedSwimTime
             
-            let convertedBikeSpeed = bikeSlider.value / 2.237 // mph to m/s
+            let convertedBikeSpeed = bikeSlider.value.rounded(.down) / 2.237 // mph to m/s
             let bikeSplit = currentRace.bikeDistance / convertedBikeSpeed
             bikeTotalTime = bikeSplit
             
