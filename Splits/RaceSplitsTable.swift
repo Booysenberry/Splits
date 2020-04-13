@@ -55,6 +55,10 @@ class RaceSplitsTable: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
+        swimDistance.tag = 0
+        bikeDistance.tag = 1
+        runDistance.tag = 2
+        
         // Checks if the user has changed measurement units
         checkForPreferredUnits()
         
@@ -78,6 +82,14 @@ class RaceSplitsTable: UITableViewController {
         }
         
         timeFormatter.dateFormat = "HH:mm:ss"
+        
+        let distanceLabels = [swimDistance, bikeDistance, runDistance]
+        
+        for distance in distanceLabels {
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPress(sender:)))
+            distance?.addGestureRecognizer(longPress)
+            distance?.isUserInteractionEnabled = true
+        }
         
         formatDistances()
         
@@ -105,6 +117,54 @@ class RaceSplitsTable: UITableViewController {
             }
         }
         calculateSplits()
+    }
+    
+    // Allows the user to change distance if long pressing on distance label
+    @objc func longPress(sender: UILongPressGestureRecognizer) {
+        guard let distanceLabel = sender.view else {
+            fatalError("could not attach distance label to the gesturerecognizer")
+        }
+        
+        let alert = UIAlertController(title: "Change Distance", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        alert.addTextField(configurationHandler: { textField in
+            textField.autocapitalizationType = .words
+            textField.keyboardType = .decimalPad
+            
+            
+            if self.usesMetricUnits {
+                textField.placeholder = "kilometers"
+            } else {
+                textField.placeholder = "miles"
+            }
+        })
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            
+            if let distanceString = alert.textFields?.first?.text {
+                if let convertedDistance = Float(distanceString) {
+                    if distanceString != "" {
+                        
+                        switch distanceLabel.tag {
+                        case 0:
+                            self.receivedRace.swimDistance = convertedDistance * 1000
+                            self.defaults.set((convertedDistance * 1000), forKey: "swimDistance")
+                        case 1:
+                            self.receivedRace.bikeDistance = convertedDistance * 1000
+                            self.defaults.set((convertedDistance * 1000), forKey: "bikeDistance")
+                        case 2:
+                            self.receivedRace.runDistance = convertedDistance * 1000
+                            self.defaults.set((convertedDistance * 1000), forKey: "runDistance")
+                        default:
+                            break
+                        }
+                        self.formatDistances()
+                    }
+                }
+            }
+        }))
+        self.present(alert, animated: true)
     }
     
     // Checks if the user has changed measurement units
@@ -144,7 +204,7 @@ class RaceSplitsTable: UITableViewController {
                         measurementFormatter.locale = locale
                         numberFormatter.maximumFractionDigits = 2
                         measurementFormatter.numberFormatter = numberFormatter
-
+                        
                         swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
                         bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
                         runDistance.text = measurementFormatter.string(from: formattedRunDistance)
@@ -159,7 +219,7 @@ class RaceSplitsTable: UITableViewController {
                         bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
                         runDistance.text = measurementFormatter.string(from: formattedRunDistance)
                     }
-
+                    
                 case false:
                     if locale.usesMetricSystem == false {
                         measurementFormatter.locale = locale
@@ -196,7 +256,7 @@ class RaceSplitsTable: UITableViewController {
                     measurementFormatter.locale = locale
                     numberFormatter.maximumFractionDigits = 2
                     measurementFormatter.numberFormatter = numberFormatter
-
+                    
                     swimDistance.text = measurementFormatter.string(from: formattedSwimDistance)
                     bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
                     runDistance.text = measurementFormatter.string(from: formattedRunDistance)
@@ -211,7 +271,7 @@ class RaceSplitsTable: UITableViewController {
                     bikeDistance.text = measurementFormatter.string(from: formattedBikeDistance)
                     runDistance.text = measurementFormatter.string(from: formattedRunDistance)
                 }
-
+                
             case false:
                 if locale.usesMetricSystem == false {
                     measurementFormatter.locale = locale
@@ -434,9 +494,9 @@ class RaceSplitsTable: UITableViewController {
         totalTime.text = "\(timeString(time: TimeInterval(accumulateTime)))"
         swimTime.text = "\(timeString(time: TimeInterval(swimTotalTime)))"
         t1Time.text = "\(timeString(time: TimeInterval(t1Slider.value)))"
-        bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
+        bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime).rounded()))"
         t2Time.text = "\(timeString(time: TimeInterval(t2Slider.value)))"
-        runTime.text = "\(timeString(time: TimeInterval(runTotalTime)))"
+        runTime.text = "\(timeString(time: TimeInterval(runTotalTime).rounded()))"
         raceTotalTime = accumulateTime
         
         if isSavedRace == false {
@@ -458,7 +518,6 @@ class RaceSplitsTable: UITableViewController {
         } else {
             swimPace.text = "Swim: \(paceString(time: TimeInterval(swimSlider!.value))) / 100 yds"
         }
-        swimTime.text = "\(timeString(time: TimeInterval(swimTotalTime)))"
         
         if isSavedRace == false {
             defaults.set(swimSlider.value, forKey: "swimPace")
@@ -490,7 +549,6 @@ class RaceSplitsTable: UITableViewController {
         } else {
             bikePace.text = "Bike: \(Int(bikeSlider.value)) mph"
         }
-        bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime)))"
         
         if isSavedRace == false {
             defaults.set(bikeSlider.value, forKey: "bikePace")

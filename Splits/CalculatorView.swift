@@ -91,12 +91,12 @@ class CalculatorView: UIViewController {
     
     @IBAction func saveRace(_ sender: Any) {
         
-        let alert = UIAlertController(title: "Race name?", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Race name", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         alert.addTextField(configurationHandler: { textField in
             textField.autocapitalizationType = .words
-            textField.placeholder = "Input the name of the race here"
+            textField.placeholder = "Enter the name of the race"
         })
         
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
@@ -190,6 +190,21 @@ class CalculatorView: UIViewController {
     
     @objc func saveCurrentRaceType() {
         defaults.set(distanceSelector.selectedSegmentIndex, forKey: "raceType")
+    }
+    
+    @IBAction func presentTutorial(_ sender: Any) {
+        
+        let info = """
+        Adjust the pace sliders to calculate your splits and overall race time.
+
+        Long press on a distance to enter a new distance.
+
+        Tap the save button to save your race for later viewing.
+        """
+        
+        let alert = UIAlertController(title: "Info", message: "\(info)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
     }
 }
 

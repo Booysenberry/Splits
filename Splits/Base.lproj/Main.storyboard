@@ -84,7 +84,11 @@
                                     <action selector="saveRace:" destination="BYZ-38-t0r" id="2RC-vA-WCC"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Item" image="info" id="Peb-fZ-1zu"/>
+                            <barButtonItem title="Item" image="info" id="Peb-fZ-1zu">
+                                <connections>
+                                    <action selector="presentTutorial:" destination="BYZ-38-t0r" id="ccu-5V-Ym4"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
@@ -285,7 +289,6 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VXR-SG-Uyo">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="740"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="bsC-rc-ymE">
                             <rect key="frame" x="0.0" y="636" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
