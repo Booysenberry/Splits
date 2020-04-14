@@ -63,7 +63,7 @@ class CalculatorView: UIViewController {
             raceSplitsVC.receivedRace.runDistance = 10000
             
         case 2:
-            raceSplitsVC.receivedRace.swimDistance = 2000
+            raceSplitsVC.receivedRace.swimDistance = 1900
             raceSplitsVC.receivedRace.bikeDistance = 90000
             raceSplitsVC.receivedRace.runDistance = 21100
             

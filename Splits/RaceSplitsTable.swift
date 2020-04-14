@@ -55,10 +55,6 @@ class RaceSplitsTable: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        swimDistance.tag = 0
-        bikeDistance.tag = 1
-        runDistance.tag = 2
-        
         // Checks if the user has changed measurement units
         checkForPreferredUnits()
         
@@ -67,21 +63,30 @@ class RaceSplitsTable: UITableViewController {
             slider?.semanticContentAttribute = .forceRightToLeft
             
             slider?.minimumTrackTintColor = .systemGray2
-            slider?.maximumTrackTintColor = .systemTeal
+            slider?.maximumTrackTintColor = .systemBlue
             slider?.minimumValueImage = UIImage(named: "rabbit")
             slider?.maximumValueImage = UIImage(named: "tortoise")
-            slider?.thumbTintColor = .systemTeal
+            slider?.thumbTintColor = .systemBlue
         }
         
         for slider in [bikeSlider, t1Slider, t2Slider] {
-            slider?.minimumTrackTintColor = .systemTeal
+            slider?.minimumTrackTintColor = .systemBlue
             slider?.maximumTrackTintColor = .systemGray2
             slider?.minimumValueImage = UIImage(named: "tortoise")
             slider?.maximumValueImage = UIImage(named: "rabbit")
-            slider?.thumbTintColor = .systemTeal
+            slider?.thumbTintColor = .systemBlue
         }
         
         timeFormatter.dateFormat = "HH:mm:ss"
+        
+        formatDistances()
+        
+        loadPresets()
+        
+        // Assign reference tags to distance labels during long press
+        swimDistance.tag = 0
+        bikeDistance.tag = 1
+        runDistance.tag = 2
         
         let distanceLabels = [swimDistance, bikeDistance, runDistance]
         
@@ -90,8 +95,9 @@ class RaceSplitsTable: UITableViewController {
             distance?.addGestureRecognizer(longPress)
             distance?.isUserInteractionEnabled = true
         }
-        
-        formatDistances()
+    }
+    
+    func loadPresets() {
         
         switch isSavedRace {
         case true:
@@ -343,6 +349,7 @@ class RaceSplitsTable: UITableViewController {
             
             switch usesMetricUnits {
             case true:
+                setMetricSliderRange()
                 swimPace.text = "Swim: \(paceString(time: TimeInterval(selectedRace.swimPace))) /100m"
                 bikePace.text = "Bike: \(Int(selectedRace.bikePace)) kph"
                 runPace.text = "Run: \(paceString(time: TimeInterval(selectedRace.runPace))) /km"
@@ -366,6 +373,7 @@ class RaceSplitsTable: UITableViewController {
         // Check if the device uses metric system
         switch usesMetricUnits {
         case true:
+            setMetricSliderRange()
             swimPace.text = "Swim: \(paceString(time: TimeInterval(defaults.float(forKey: "swimPace")))) /100m"
             bikePace.text = "Bike: \(Int(defaults.float(forKey: "bikePace"))) kph"
             runPace.text = "Run: \(paceString(time: TimeInterval(defaults.float(forKey: "runPace")))) /km"
@@ -389,12 +397,22 @@ class RaceSplitsTable: UITableViewController {
         bikeSlider.minimumValue = 10
         bikeSlider.maximumValue = 30
         
-        runSlider.minimumValue = 300
+        runSlider.minimumValue = 240
         runSlider.maximumValue = 960
+    }
+    
+    func setMetricSliderRange() {
+        
+        bikeSlider.minimumValue = 10
+        bikeSlider.maximumValue = 50
+        
+        runSlider.minimumValue = 165
+        runSlider.maximumValue = 600
     }
     
     // Format pace string
     func paceString(time: TimeInterval) -> String {
+        
         let minute = Int(time) / 60 % 60
         let second = Int(time) % 60
         
@@ -404,6 +422,7 @@ class RaceSplitsTable: UITableViewController {
     
     // Format time string
     func timeString(time: TimeInterval) -> String {
+        
         let hour = Int(time) / 3600
         let minute = Int(time) / 60 % 60
         let second = Int(time) % 60
@@ -490,6 +509,7 @@ class RaceSplitsTable: UITableViewController {
     
     // Calculate total time
     func calculateTotalTime() {
+        
         let accumulateTime = swimTotalTime + t1TotalTime + bikeTotalTime + t2TotalTime + runTotalTime
         totalTime.text = "\(timeString(time: TimeInterval(accumulateTime)))"
         swimTime.text = "\(timeString(time: TimeInterval(swimTotalTime)))"
