@@ -37,7 +37,6 @@ class SavedRacesTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "savedRaceCell") as! SavedRaceCell
         
         cell.raceNameLabel.text = savedRacesFromCD[indexPath.row].raceName
-        cell.raceTimeLabel.text = "\(timeString(time: TimeInterval(savedRacesFromCD[indexPath.row].totalTime)))"
         
         return cell
     }

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Tortoise.png",
+      "filename" : "settings.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,12 +12,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "tortoise-dark.png",
+      "filename" : "settings-dark.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Tortoise@2x.png",
+      "filename" : "settings@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -28,12 +28,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "tortoise-dark@2x.png",
+      "filename" : "settings-dark@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Tortoise@3x.png",
+      "filename" : "settings@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     },
@@ -44,7 +44,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "tortoise-dark@3x.png",
+      "filename" : "settings-dark@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

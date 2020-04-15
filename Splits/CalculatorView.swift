@@ -43,7 +43,6 @@ class CalculatorView: UIViewController {
         
         // Notification when app terminates
         notificatioCentre.addObserver(self, selector: #selector(saveCurrentRaceType), name: UIApplication.willTerminateNotification, object: nil)
-        
     }
     
     @IBAction func didChangeRaceDistance(_ sender: Any) {
@@ -195,9 +194,9 @@ class CalculatorView: UIViewController {
     @IBAction func presentTutorial(_ sender: Any) {
         
         let info = """
-        Adjust the pace sliders to calculate your splits and overall race time.
+        Adjust the pace sliders to calculate your splits and predicted race time.
 
-        Long press on a distance to enter a new distance.
+        Long press on a distance to enter a custom distance.
 
         Tap the save button to save your race for later viewing.
         """

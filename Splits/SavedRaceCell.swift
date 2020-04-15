@@ -9,9 +9,7 @@
 import UIKit
 
 class SavedRaceCell: UITableViewCell {
-
-    @IBOutlet weak var raceNameLabel: UILabel!
-    @IBOutlet weak var raceTimeLabel: UILabel!
     
-
+    @IBOutlet weak var raceNameLabel: UILabel!
+    
 }

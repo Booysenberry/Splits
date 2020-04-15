@@ -186,7 +186,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Saved Races" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bkF-rs-YCN">
                                                     <rect key="frame" x="16" y="0.0" width="199" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -206,7 +206,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Settings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3VC-6I-RkN">
                                                     <rect key="frame" x="16" y="0.0" width="199" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -224,10 +224,14 @@
                             <outlet property="delegate" destination="Q8K-LF-Sjn" id="Yp0-vO-SVy"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <outlet property="savedRacesCell" destination="n3L-up-U0D" id="xk5-8Z-Uys"/>
+                        <outlet property="settingsCell" destination="8Iw-xh-rL5" id="381-MG-EEe"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kjx-af-Iy9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1048" y="828"/>
+            <point key="canvasLocation" x="1047.8260869565217" y="827.67857142857144"/>
         </scene>
         <!--Saved Races Table View Controller-->
         <scene sceneID="w0z-Nr-fwV">
@@ -238,33 +242,28 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="savedRaceCell" textLabel="pX4-KY-9PK" detailTextLabel="SmH-HE-8cY" style="IBUITableViewCellStyleValue1" id="azO-Eg-we8" customClass="SavedRaceCell" customModule="Splits" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="250" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="savedRaceCell" textLabel="pX4-KY-9PK" imageView="Aqh-BN-EPW" style="IBUITableViewCellStyleDefault" id="azO-Eg-we8" customClass="SavedRaceCell" customModule="Splits" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="250" height="45.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="azO-Eg-we8" id="aQX-wf-yYT">
-                                    <rect key="frame" x="0.0" y="0.0" width="223" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="223" height="45.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Race Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pX4-KY-9PK">
-                                            <rect key="frame" x="16" y="12" width="87.5" height="20.5"/>
+                                            <rect key="frame" x="53" y="0.0" width="162" height="45.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Time" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SmH-HE-8cY">
-                                            <rect key="frame" x="177" y="12" width="38" height="20.5"/>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="stopwatch" id="Aqh-BN-EPW">
+                                            <rect key="frame" x="16" y="11.5" width="22" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="raceNameLabel" destination="pX4-KY-9PK" id="UnF-VF-atT"/>
-                                    <outlet property="raceTimeLabel" destination="SmH-HE-8cY" id="DHW-ED-x4u"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -677,5 +676,6 @@
     <resources>
         <image name="info" width="22" height="22"/>
         <image name="menu" width="22" height="22"/>
+        <image name="stopwatch" width="22" height="22"/>
     </resources>
 </document>
