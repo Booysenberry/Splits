@@ -511,7 +511,7 @@ class RaceSplitsTable: UITableViewController {
     func calculateTotalTime() {
         
         let accumulateTime = swimTotalTime + t1TotalTime + bikeTotalTime + t2TotalTime + runTotalTime
-        totalTime.text = "\(timeString(time: TimeInterval(accumulateTime)))"
+        totalTime.text = "\(timeString(time: TimeInterval(accumulateTime.rounded())))"
         swimTime.text = "\(timeString(time: TimeInterval(swimTotalTime)))"
         t1Time.text = "\(timeString(time: TimeInterval(t1Slider.value)))"
         bikeTime.text = "\(timeString(time: TimeInterval(bikeTotalTime).rounded()))"
