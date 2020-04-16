@@ -44,7 +44,7 @@ class RaceSplitsTable: UITableViewController {
     var t1TotalTime: Float = 0.0
     var t2TotalTime: Float = 0.0
     let fiveSecondIncrements: Float = 5
-    let sixtySecondIncrements: Float = 60
+    let thirtySecondIncrements: Float = 30
     
     let defaults = UserDefaults.standard
     let notificationCentre = NotificationCenter.default
@@ -547,7 +547,7 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func t1SliderChanged(_ sender: UISlider) {
         
         // Increments of 5 seconds
-        let roundedT1Time = round(t1Slider.value / sixtySecondIncrements) * sixtySecondIncrements
+        let roundedT1Time = round(t1Slider.value / thirtySecondIncrements) * thirtySecondIncrements
         
         t1Slider.value = roundedT1Time
         t1TotalTime = roundedT1Time
@@ -578,7 +578,7 @@ class RaceSplitsTable: UITableViewController {
     @IBAction func t2SliderChanged(_ sender: UISlider) {
         
         // Increments of 5
-        let roundedT2Time = round(t2Slider.value / sixtySecondIncrements) * sixtySecondIncrements
+        let roundedT2Time = round(t2Slider.value / thirtySecondIncrements) * thirtySecondIncrements
         
         t2Slider.value = roundedT2Time
         t2TotalTime = roundedT2Time
